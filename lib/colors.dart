@@ -15,4 +15,5 @@ class AppColors {
   // static const Color onError = Color(0xFFFFFFFF);
 
   static const Color darkGreen = Color(0xFF557C55);
+  static const Color midGreen = Color(0xFF8FC951);
 }

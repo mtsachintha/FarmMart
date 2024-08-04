@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'colors.dart';
 
 class IntroPage extends StatefulWidget {
@@ -54,6 +55,7 @@ class _IntroPageState extends State<IntroPage> {
                       'Straight From Fields',
                       style: TextStyle(
                         fontSize: 12,
+                        fontWeight: FontWeight.w500,
                         color: Colors.grey[700],
                       ),
                     ),
@@ -83,6 +85,63 @@ class _IntroPageState extends State<IntroPage> {
                   'Get fresh produce directly from the farm, ensuring the best quality and taste.',
                 ),
                 // Add more pages as needed
+              ],
+            ),
+          ),
+          // Carousel indicator
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SmoothPageIndicator(
+              controller: _pageController, // PageController
+              count: 3,
+              effect: WormEffect(
+                dotWidth: 8.0,
+                dotHeight: 8.0,
+                activeDotColor: AppColors.darkGreen,
+                dotColor: Colors.grey,
+              ), // your preferred effect
+            ),
+          ),
+          // Buttons on top of the image
+          Padding(
+            padding: const EdgeInsets.all(32.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  child: TextButton(
+                    onPressed: () {
+                      // handle skip
+                    },
+                    child: Text(
+                      'Skip',
+                      style: TextStyle(
+                          color: const Color.fromARGB(128, 128, 128, 128),
+                          fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: 240,
+                  height: 44,
+                  child: ElevatedButton(
+                    onPressed: _nextPage,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors
+                          .midGreen, // Change this to your desired color
+                    ),
+                    child: Text(
+                      'Next',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -128,49 +187,6 @@ class _IntroPageState extends State<IntroPage> {
                 child: Image.asset(
                   imagePath,
                   fit: BoxFit.cover,
-                ),
-              ),
-              // Buttons on top of the image
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Padding(
-                  padding: const EdgeInsets.all(32.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        height: 44,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.5),
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                        child: TextButton(
-                          onPressed: () {
-                            // handle skip
-                          },
-                          child: Text(
-                            'Skip',
-                            style: TextStyle(
-                                color: const Color.fromARGB(128, 128, 128, 128),
-                                fontWeight: FontWeight.w600),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 240,
-                        height: 44,
-                        child: ElevatedButton(
-                          onPressed: _nextPage,
-                          child: Text(
-                            'Next',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
                 ),
               ),
             ],
