@@ -16,4 +16,5 @@ class AppColors {
 
   static const Color darkGreen = Color(0xFF557C55);
   static const Color midGreen = Color(0xFF8FC951);
+  static const Color defaultGray = Color(0xFF808080);
 }

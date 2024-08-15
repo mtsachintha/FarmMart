@@ -27,14 +27,14 @@ class LoginPage extends StatelessWidget {
                 children: [
                   // Logo
                   SizedBox(
-                    width: 48,
-                    height: 48,
+                    width: 54,
+                    height: 54,
                     child: Image.asset(
                       'assets/logo.png', // Replace with your logo asset path
                       fit: BoxFit.cover,
                     ),
                   ),
-                  SizedBox(width: 16), // Space between logo and text
+                  SizedBox(width: 24), // Space between logo and text
                   // Text next to the logo
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,7 +42,7 @@ class LoginPage extends StatelessWidget {
                       Text(
                         'FarmMart',
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 24,
                           fontWeight: FontWeight.bold,
                           color: AppColors.darkGreen,
                         ),
@@ -60,23 +60,31 @@ class LoginPage extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 60),
-              TextField(
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+              ConstrainedBox(
+                constraints:
+                    BoxConstraints(maxWidth: 400), // Adjust max width as needed
+                child: TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
                   ),
                 ),
               ),
               SizedBox(height: 20),
-              TextField(
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+              ConstrainedBox(
+                constraints:
+                    BoxConstraints(maxWidth: 400), // Adjust max width as needed
+                child: TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
                   ),
+                  obscureText: true,
                 ),
-                obscureText: true,
               ),
               SizedBox(height: 10),
               Align(
@@ -85,7 +93,10 @@ class LoginPage extends StatelessWidget {
                   onPressed: () {
                     // Handle forgot password
                   },
-                  child: Text('Forgot Password?'),
+                  child: Text('Forgot Password?',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.darkGreen)),
                 ),
               ),
               SizedBox(height: 20),
@@ -95,9 +106,14 @@ class LoginPage extends StatelessWidget {
                 },
                 child: Text('Log In'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                  textStyle: TextStyle(fontSize: 18),
+                  backgroundColor: AppColors.darkGreen,
+                  padding: EdgeInsets.symmetric(horizontal: 120, vertical: 24),
+                  textStyle: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  foregroundColor:
+                      Colors.white, // This sets the text color to white
                 ),
               ),
               SizedBox(height: 20),
@@ -107,19 +123,29 @@ class LoginPage extends StatelessWidget {
                 },
                 child: Text('Sign Up'),
                 style: OutlinedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                  textStyle: TextStyle(fontSize: 18),
-                ),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 115, vertical: 21),
+                    textStyle: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    foregroundColor: AppColors.darkGreen),
               ),
               SizedBox(height: 20),
-              Text('Or Log In with'),
-              SizedBox(height: 10),
+              Text(
+                'Or Log In with',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.darkGreen,
+                ),
+              ),
+              SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(
-                    width: 64.0,
-                    height: 64.0,
+                    width: 48.0,
+                    height: 48.0,
                     child: IconButton(
                       icon:
                           Image.asset('assets/google_icon.png'), // Google icon
@@ -129,22 +155,27 @@ class LoginPage extends StatelessWidget {
                     ),
                   ),
                   SizedBox(
-                    width: 64.0,
-                    height: 64.0,
+                    width: 16,
+                  ),
+                  SizedBox(
+                    width: 48.0,
+                    height: 48.0,
                     child: IconButton(
-                      icon: Image.asset(
-                          'assets/facebook_icon.png'), // Facebook icon
+                      icon: Image.asset('assets/fb_icon.png'), // Facebook icon
                       onPressed: () {
                         // Handle Facebook login
                       },
                     ),
                   ),
                   SizedBox(
-                    width: 64.0,
-                    height: 64.0,
+                    width: 16,
+                  ),
+                  SizedBox(
+                    width: 48.0,
+                    height: 48.0,
                     child: IconButton(
                       icon: Image.asset(
-                          'assets/linkedin_icon.png'), // LinkedIn icon
+                          'assets/linked_icon.png'), // LinkedIn icon
                       onPressed: () {
                         // Handle LinkedIn login
                       },
