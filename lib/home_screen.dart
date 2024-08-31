@@ -27,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Center(
         child: Column(
           children: [
-            SizedBox(height: 12),
+            SizedBox(height: 16),
             // Row for the three text buttons with borders and arrows
             Row(
               mainAxisAlignment:
@@ -254,7 +254,7 @@ AppBar buildHomeAppBar() {
         ),
         // Account icon at the far right
         IconButton(
-          icon: Icon(Icons.account_circle),
+          icon: Icon(Icons.bookmarks_outlined),
           onPressed: () {
             // Action for account icon tap
           },

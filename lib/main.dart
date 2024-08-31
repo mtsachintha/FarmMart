@@ -1,6 +1,9 @@
+import 'package:farm_application/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'home_screen.dart'; // Import the screen with the AppBar
 import 'auction_screen.dart'; // Import the screen with the AppBar
+import 'chat_screen.dart'; // Import the screen with the AppBar
+import 'settings_screen.dart'; // Import the screen with the AppBar
 
 void main() {
   runApp(MyApp());
@@ -27,9 +30,16 @@ class _BuildHomeScreenState extends State<BuildHomeScreen> {
   // Define the different screens you want to navigate to
   final List<Widget> _screens = [
     HomeScreen(), // Home screen widget
-    Center(child: Text('Auction Screen')), // Placeholder for Auction screen
-    Center(child: Text('Messages Screen')), // Placeholder for Messages screen
-    Center(child: Text('Profile Screen')), // Placeholder for Profile screen
+    AuctionScreen(), // Placeholder for Auction screen
+    ChatScreen(),
+    SettingsScreen()
+  ];
+
+  final List<AppBar> _appBars = [
+    buildHomeAppBar(), // Home screen widget
+    buildAppBar(), // Placeholder for Auction screen
+    buildHomeAppBar(), // Placeholder for Messages screen
+    buildHomeAppBar(), // Placeholder for Profile screen
   ];
 
   void _onItemTapped(int index) {
@@ -41,7 +51,7 @@ class _BuildHomeScreenState extends State<BuildHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildHomeAppBar(),
+      appBar: _appBars[_selectedIndex],
       body: _screens[_selectedIndex], // Display the selected screen
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
