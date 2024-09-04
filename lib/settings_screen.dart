@@ -18,7 +18,10 @@ class SettingsScreen extends StatelessWidget {
                 backgroundImage: AssetImage(
                     'assets/profile_image.png'), // Use your image here
               ),
-              title: Text('Evo Green House'),
+              title: Text(
+                'Evo Green House',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               onTap: () {
                 // Handle profile tap
               },

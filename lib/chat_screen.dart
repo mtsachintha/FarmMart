@@ -63,11 +63,15 @@ class ChatScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView.builder(
-        itemCount: chatItems.length,
-        itemBuilder: (context, index) {
-          return _buildChatItem(chatItems[index]);
-        },
+      body: Padding(
+        padding: const EdgeInsets.all(
+            8.0), // Add padding around the ListView.builder
+        child: ListView.builder(
+          itemCount: chatItems.length,
+          itemBuilder: (context, index) {
+            return _buildChatItem(chatItems[index]);
+          },
+        ),
       ),
     );
   }
