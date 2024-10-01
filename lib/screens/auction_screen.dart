@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:farm_application/colors.dart';
 
 class AuctionScreen extends StatefulWidget {
   @override
@@ -12,20 +13,20 @@ class _AuctionScreenState extends State<AuctionScreen> {
     return Scaffold(
       body: Column(
         children: [
-          SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(width: 24),
-              _buildTextButton("Active"),
-              SizedBox(width: 8),
-              _buildTextButton("Sort By"),
-              SizedBox(width: 8),
-              _buildTextButton("Type"),
-            ],
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                _buildTextButton("Active"),
+                _buildTextButton("Sort By"),
+                _buildTextButton("Type"),
+              ],
+            ),
           ),
           Expanded(
-            child: BidItemList(), // Here
+            child:
+                BidItemList(), // Expanded should be inside a bounded height widget
           ),
         ],
       ),
@@ -33,20 +34,18 @@ class _AuctionScreenState extends State<AuctionScreen> {
   }
 
   Widget _buildTextButton(String text) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
-        borderRadius: BorderRadius.circular(16),
+    return TextButton.icon(
+      onPressed: () {
+        // Add your onPressed function here
+      },
+      icon: Text(
+        text,
+        style: TextStyle(
+            fontSize: 12.0, fontWeight: FontWeight.w600, color: Colors.black),
       ),
-      child: TextButton.icon(
-        onPressed: () {
-          // Add your onPressed function here
-        },
-        icon: Text(
-          text,
-          style: TextStyle(color: Colors.black),
-        ),
-        label: Icon(Icons.arrow_drop_down),
+      label: Icon(
+        Icons.arrow_drop_down,
+        color: AppColors.defaultGray,
       ),
     );
   }
@@ -101,7 +100,7 @@ class BidItemList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       itemCount: bidItems.length,
       itemBuilder: (context, index) {
         final item = bidItems[index];
@@ -220,7 +219,7 @@ class BidItemList extends StatelessWidget {
         ),
         SizedBox(height: 4.0),
         Text(
-          'Rs. ${endIn.toString()}',
+          endIn,
           style: TextStyle(
             fontSize: 16.0,
             fontWeight: FontWeight.bold,
@@ -236,7 +235,7 @@ class BidItemList extends StatelessWidget {
         // Add your onPressed function here
       },
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.orange, // Background color
+        backgroundColor: Colors.orange,
         padding: EdgeInsets.symmetric(horizontal: 32.0),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8.0),
@@ -244,8 +243,7 @@ class BidItemList extends StatelessWidget {
       ),
       child: Text(
         'Bid Again',
-        style: TextStyle(
-            fontWeight: FontWeight.bold, color: Colors.white), // Text color
+        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
       ),
     );
   }
@@ -255,7 +253,7 @@ class BidItemList extends StatelessWidget {
       onPressed: () {
         // Add your onPressed function here
       },
-      style: ElevatedButton.styleFrom(
+      style: TextButton.styleFrom(
         padding: EdgeInsets.symmetric(horizontal: 32.0),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8.0),
@@ -276,15 +274,13 @@ AppBar buildAppBar() {
     titleSpacing: 0.0,
     title: Row(
       children: <Widget>[
-        // Logo at the left
         Padding(
-          padding: const EdgeInsets.all(12.0),
+          padding: const EdgeInsets.all(8.0),
           child: Image.asset(
-            'assets/logo_banner.png', // Replace with your logo asset path
-            height: 56, // Adjust logo height as needed
+            'assets/logo_banner.png',
+            height: 50, // Adjust logo height
           ),
         ),
-        // Expanded widget to fill available space
         Expanded(
           child: Container(),
         ),
@@ -295,17 +291,14 @@ AppBar buildAppBar() {
                 fontWeight: FontWeight.bold, color: Colors.deepOrangeAccent),
           ),
           onPressed: () {
-            // Your code here
             print("Button pressed");
           },
         ),
         SizedBox(width: 16),
-        // Search bar aligned to the right with max width
-        // Account icon at the far right
         IconButton(
           icon: Icon(Icons.bookmarks_outlined),
           onPressed: () {
-            // Action for account icon tap
+            // Action for icon tap
           },
         ),
       ],

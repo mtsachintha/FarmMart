@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'colors.dart';
+import '../../colors.dart';
 
 class BusinessNameScreen extends StatelessWidget {
   @override
@@ -47,7 +47,7 @@ class BusinessNameScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 32),
-                    Container(
+                    SizedBox(
                       width: 520, // Set the desired max width here
                       child: TextField(
                         decoration: InputDecoration(
@@ -62,7 +62,7 @@ class BusinessNameScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 16),
-                    Container(
+                    SizedBox(
                       width: 520, // Set the desired max width here
                       child: TextField(
                         decoration: InputDecoration(
@@ -77,7 +77,7 @@ class BusinessNameScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 16),
-                    Container(
+                    SizedBox(
                       width: 520, // Set the desired max width here
                       child: TextField(
                         decoration: InputDecoration(
@@ -96,7 +96,6 @@ class BusinessNameScreen extends StatelessWidget {
                       onPressed: () {
                         // Handle login
                       },
-                      child: Text('Next'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.darkGreen,
                         padding:
@@ -108,6 +107,7 @@ class BusinessNameScreen extends StatelessWidget {
                         foregroundColor:
                             Colors.white, // This sets the text color to white
                       ),
+                      child: Text('Next'),
                     ),
                   ],
                 ),

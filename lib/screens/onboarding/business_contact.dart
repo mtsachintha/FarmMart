@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'colors.dart';
+import '../../colors.dart';
 
 class BusinessContactScreen extends StatelessWidget {
   @override
@@ -47,7 +47,7 @@ class BusinessContactScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 32),
-                    Container(
+                    SizedBox(
                       width:
                           520, // Set the desired max width for the entire row
                       child: Row(
@@ -70,7 +70,6 @@ class BusinessContactScreen extends StatelessWidget {
                             onPressed: () {
                               // Handle the verification action here
                             },
-                            child: Text('Verify'),
                             style: TextButton.styleFrom(
                               foregroundColor:
                                   Colors.green, // Set the text color to green
@@ -83,12 +82,13 @@ class BusinessContactScreen extends StatelessWidget {
                                     .green, // Set the text color if needed
                               ),
                             ),
+                            child: Text('Verify'),
                           ),
                         ],
                       ),
                     ),
                     SizedBox(height: 16),
-                    Container(
+                    SizedBox(
                       width:
                           520, // Set the desired max width for the entire row
                       child: Row(
@@ -111,7 +111,6 @@ class BusinessContactScreen extends StatelessWidget {
                             onPressed: () {
                               // Handle the verification action here
                             },
-                            child: Text('Verify'),
                             style: TextButton.styleFrom(
                               foregroundColor:
                                   Colors.green, // Set the text color to green
@@ -124,6 +123,7 @@ class BusinessContactScreen extends StatelessWidget {
                                     .green, // Set the text color if needed
                               ),
                             ),
+                            child: Text('Verify'),
                           ),
                         ],
                       ),
@@ -133,7 +133,6 @@ class BusinessContactScreen extends StatelessWidget {
                       onPressed: () {
                         // Handle login
                       },
-                      child: Text('Next'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.darkGreen,
                         padding:
@@ -145,6 +144,7 @@ class BusinessContactScreen extends StatelessWidget {
                         foregroundColor:
                             Colors.white, // This sets the text color to white
                       ),
+                      child: Text('Next'),
                     ),
                   ],
                 ),

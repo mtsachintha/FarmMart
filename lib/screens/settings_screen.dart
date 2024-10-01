@@ -15,8 +15,6 @@ class SettingsScreen extends StatelessWidget {
             ListTile(
               leading: CircleAvatar(
                 radius: 30.0, // Increase the size by setting the radius
-                backgroundImage: AssetImage(
-                    'assets/profile_image.png'), // Use your image here
               ),
               title: Text(
                 'Evo Green House',

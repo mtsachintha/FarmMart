@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'colors.dart';
+import '../../colors.dart';
 
 class LoginPage extends StatelessWidget {
   @override
@@ -104,7 +104,6 @@ class LoginPage extends StatelessWidget {
                 onPressed: () {
                   // Handle login
                 },
-                child: Text('Log In'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.darkGreen,
                   padding: EdgeInsets.symmetric(horizontal: 120, vertical: 24),
@@ -115,13 +114,13 @@ class LoginPage extends StatelessWidget {
                   foregroundColor:
                       Colors.white, // This sets the text color to white
                 ),
+                child: Text('Log In'),
               ),
               SizedBox(height: 20),
               OutlinedButton(
                 onPressed: () {
                   // Handle sign up
                 },
-                child: Text('Sign Up'),
                 style: OutlinedButton.styleFrom(
                     padding:
                         EdgeInsets.symmetric(horizontal: 115, vertical: 21),
@@ -130,6 +129,7 @@ class LoginPage extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                     foregroundColor: AppColors.darkGreen),
+                child: Text('Sign Up'),
               ),
               SizedBox(height: 20),
               Text(

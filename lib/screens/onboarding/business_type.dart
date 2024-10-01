@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'colors.dart';
+import '../../colors.dart';
 
 class BisTypeSelectionScreen extends StatefulWidget {
   @override
@@ -126,7 +126,6 @@ class _BisTypeSelectionScreenState extends State<BisTypeSelectionScreen> {
               onPressed: () {
                 // Handle login
               },
-              child: Text('Next'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.darkGreen,
                 padding: EdgeInsets.symmetric(horizontal: 90, vertical: 18),
@@ -137,6 +136,7 @@ class _BisTypeSelectionScreenState extends State<BisTypeSelectionScreen> {
                 foregroundColor:
                     Colors.white, // This sets the text color to white
               ),
+              child: Text('Next'),
             ),
             SizedBox(
               height: 24,
