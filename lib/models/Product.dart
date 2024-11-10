@@ -52,6 +52,37 @@ class Product {
     };
   }
 
+  factory Product.fromMap(Map<dynamic, dynamic> map) {
+    return Product(
+      bidNow: (map['bidNow'] ?? 0) as int,
+      bidStart: (map['bidStart'] ?? 0) as int,
+      buyNow: (map['buyNow'] ?? 0) as int,
+      category: (map['category'] ?? '') as String,
+      created: map['created'] != null
+          ? (map['created'] is Timestamp
+              ? (map['created'] as Timestamp).toDate()
+              : DateTime.parse(map['created'] as String))
+          : DateTime.now(),
+      description: (map['description'] ?? '') as String,
+      end: map['end'] != null
+          ? (map['end'] is Timestamp
+              ? (map['end'] as Timestamp).toDate()
+              : DateTime.parse(map['end'] as String))
+          : DateTime.now(),
+      images: map['images'] != null
+          ? List<String>.from(map['images'] as List<dynamic>)
+          : [],
+      metric: (map['metric'] ?? '') as String,
+      name: (map['name'] ?? '') as String,
+      quantity: (map['quantity'] ?? '') as String,
+      seller: map['seller'] is DocumentReference
+          ? (map['seller'] as DocumentReference).path
+          : (map['seller'] ?? '')
+              as String, // Convert DocumentReference to path, or fallback to empty string
+      thumbnail: (map['thumbnail'] ?? '') as String,
+    );
+  }
+
   // Function to add product to Firestore
   Future<void> addToFirestore() async {
     await FirebaseFirestore.instance.collection('listings').add(toJson());
