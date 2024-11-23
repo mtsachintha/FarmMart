@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:farm_application/colors.dart';
 
 void main() {
   runApp(MaterialApp(home: SettingsScreen()));
@@ -144,4 +145,36 @@ class SettingsScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+AppBar buildSettingsAppBar() {
+  return AppBar(
+    titleSpacing: 0.0,
+    backgroundColor: AppColors.darkGreen,
+    title: Row(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+          child: Text(
+            "Settings",
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w500,
+              fontSize: 20.0, // Adjust the font size as needed
+            ),
+          ),
+        ),
+        Spacer(), // Pushes the icon to the right
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: IconButton(
+            icon: Icon(Icons.bookmarks_outlined, color: Colors.white),
+            onPressed: () {
+              // Action for bookmark icon tap
+            },
+          ),
+        ),
+      ],
+    ),
+  );
 }

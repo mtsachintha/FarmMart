@@ -1,55 +1,9 @@
+import 'package:farm_application/models/auction.dart';
+import 'package:farm_application/models/product.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:farm_application/colors.dart';
-
-class AuctionScreen extends StatefulWidget {
-  @override
-  _AuctionScreenState createState() => _AuctionScreenState();
-}
-
-class _AuctionScreenState extends State<AuctionScreen> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                _buildTextButton("Active"),
-                _buildTextButton("Sort By"),
-                _buildTextButton("Type"),
-              ],
-            ),
-          ),
-          Expanded(
-            child:
-                BidItemList(), // Expanded should be inside a bounded height widget
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTextButton(String text) {
-    return TextButton.icon(
-      onPressed: () {
-        // Add your onPressed function here
-      },
-      icon: Text(
-        text,
-        style: TextStyle(
-            fontSize: 12.0, fontWeight: FontWeight.w600, color: Colors.black),
-      ),
-      label: Icon(
-        Icons.arrow_drop_down,
-        color: AppColors.defaultGray,
-      ),
-    );
-  }
-}
 
 class BidItem {
   final String refNo;
@@ -69,33 +23,78 @@ class BidItem {
   });
 }
 
+class AuctionScreen extends StatefulWidget {
+  @override
+  _AuctionScreenState createState() => _AuctionScreenState();
+}
+
+class _AuctionScreenState extends State<AuctionScreen> {
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  List<BidItem> bidItems = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchBidItems();
+  }
+
+  void fetchBidItems() async {
+    List<BidItem> fetchedBidItems = [];
+    QuerySnapshot auctionSnapshot = await firestore.collection('auction').get();
+
+    for (var doc in auctionSnapshot.docs) {
+      Auction auction = Auction.fromMap(doc.data() as Map<String, dynamic>);
+      DocumentSnapshot productSnapshot =
+          await firestore.collection('listings').doc(auction.ref).get();
+
+      if (productSnapshot.exists) {
+        Product product =
+            Product.fromMap(productSnapshot.data() as Map<String, dynamic>);
+        String endIn = calculateTimeRemaining(product.end);
+
+        BidItem bidItem = BidItem(
+          refNo: auction.ref,
+          title: product.name,
+          yourBid: auction.bid,
+          going: product.bidNow,
+          buyNow: product.buyNow,
+          endIn: endIn,
+        );
+
+        fetchedBidItems.add(bidItem);
+      }
+    }
+
+    setState(() {
+      bidItems = fetchedBidItems;
+    });
+  }
+
+  String calculateTimeRemaining(DateTime endDate) {
+    final Duration remaining = endDate.difference(DateTime.now());
+    if (remaining.inDays > 0) {
+      return '${remaining.inDays} Days';
+    } else if (remaining.inHours > 0) {
+      return '${remaining.inHours} Hours';
+    } else if (remaining.inMinutes > 0) {
+      return '${remaining.inMinutes} Minutes';
+    } else {
+      return 'Ended';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: BidItemList(bidItems: bidItems),
+    );
+  }
+}
+
 class BidItemList extends StatelessWidget {
-  final List<BidItem> bidItems = [
-    BidItem(
-      refNo: '29991908DE',
-      title: '3 Ton of Organic Unprocessed Rice with Low Water Density',
-      yourBid: 1500000,
-      going: 1600000,
-      buyNow: 1800000,
-      endIn: '2 Days',
-    ),
-    BidItem(
-      refNo: '1087345AB',
-      title: '2 Ton of Premium Grade Wheat',
-      yourBid: 1200000,
-      going: 1300000,
-      buyNow: 1400000,
-      endIn: '5 Days',
-    ),
-    BidItem(
-      refNo: '457123CD',
-      title: '1 Ton of Organic Corn',
-      yourBid: 900000,
-      going: 950000,
-      buyNow: 1000000,
-      endIn: '1 Day',
-    ),
-  ];
+  final List<BidItem> bidItems;
+
+  BidItemList({required this.bidItems});
 
   @override
   Widget build(BuildContext context) {
@@ -166,19 +165,11 @@ class BidItemList extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: Colors.grey[600],
-          ),
-        ),
+        Text(label, style: TextStyle(color: Colors.grey[600])),
         SizedBox(height: 4.0),
         Text(
           'Rs. ${NumberFormat.currency(locale: 'en_LK', symbol: '').format(amount)}',
-          style: TextStyle(
-            fontSize: 16.0,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
         ),
       ],
     );
@@ -188,20 +179,14 @@ class BidItemList extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: Colors.grey[600],
-          ),
-        ),
+        Text(label, style: TextStyle(color: Colors.grey[600])),
         SizedBox(height: 4.0),
         Text(
           'Rs. ${NumberFormat.currency(locale: 'en_LK', symbol: '').format(amount)}',
           style: TextStyle(
-            fontSize: 16.0,
-            fontWeight: FontWeight.bold,
-            color: Colors.deepOrange,
-          ),
+              fontSize: 16.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.deepOrange),
         ),
       ],
     );
@@ -211,95 +196,65 @@ class BidItemList extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: Colors.grey[600],
-          ),
-        ),
+        Text(label, style: TextStyle(color: Colors.grey[600])),
         SizedBox(height: 4.0),
-        Text(
-          endIn,
-          style: TextStyle(
-            fontSize: 16.0,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        Text(endIn,
+            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
       ],
     );
   }
 
   Widget _buildBidAgainButton() {
     return ElevatedButton(
-      onPressed: () {
-        // Add your onPressed function here
-      },
+      onPressed: () {},
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.orange,
         padding: EdgeInsets.symmetric(horizontal: 32.0),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
       ),
-      child: Text(
-        'Bid Again',
-        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-      ),
+      child: Text('Bid Again',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
     );
   }
 
   Widget _buildViewListingButton() {
     return TextButton(
-      onPressed: () {
-        // Add your onPressed function here
-      },
+      onPressed: () {},
       style: TextButton.styleFrom(
         padding: EdgeInsets.symmetric(horizontal: 32.0),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
       ),
-      child: Text(
-        'View Listing >>',
-        style: TextStyle(
-          color: Colors.grey[600],
-        ),
-      ),
+      child: Text('View Listing >>', style: TextStyle(color: Colors.grey[600])),
     );
   }
 }
 
-AppBar buildAppBar() {
+AppBar buildAuctionAppBar() {
   return AppBar(
     titleSpacing: 0.0,
+    backgroundColor: AppColors.darkGreen,
     title: Row(
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Image.asset(
-            'assets/logo_banner.png',
-            height: 50, // Adjust logo height
-          ),
-        ),
-        Expanded(
-          child: Container(),
-        ),
-        TextButton(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0),
           child: Text(
-            "Switch to Selling",
+            "Auction",
             style: TextStyle(
-                fontWeight: FontWeight.bold, color: Colors.deepOrangeAccent),
+              color: Colors.white,
+              fontWeight: FontWeight.w500,
+              fontSize: 20.0, // Adjust the font size as needed
+            ),
           ),
-          onPressed: () {
-            print("Button pressed");
-          },
         ),
-        SizedBox(width: 16),
-        IconButton(
-          icon: Icon(Icons.bookmarks_outlined),
-          onPressed: () {
-            // Action for icon tap
-          },
+        Spacer(), // Pushes the icon to the right
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: IconButton(
+            icon: Icon(Icons.bookmarks_outlined, color: Colors.white),
+            onPressed: () {
+              // Action for bookmark icon tap
+            },
+          ),
         ),
       ],
     ),

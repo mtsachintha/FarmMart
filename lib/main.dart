@@ -1,8 +1,9 @@
 import 'package:farm_application/screens/settings_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'sample_data.dart'; // Import the screen with the AppBar
+// Import the screen with the AppBar
 import 'screens/home_screen.dart'; // Import the screen with the AppBar
+// Import the screen with the AppBar
 import 'screens/auction_screen.dart'; // Import the screen with the AppBar
 import 'screens/chat_screen.dart'; // Import the screen with the AppBar
 import 'colors.dart';
@@ -43,15 +44,15 @@ class _BuildHomeScreenState extends State<BuildHomeScreen> {
   final List<Widget> _screens = [
     HomeScreen(), // Home screen widget
     AuctionScreen(), // Placeholder for Auction screen
-    SampleDataScreen(),
+    ChatListScreen(),
     SettingsScreen()
   ];
 
   final List<AppBar> _appBars = [
     buildHomeAppBar(), // Home screen widget
-    buildAppBar(), // Placeholder for Auction screen
-    buildHomeAppBar(), // Placeholder for Messages screen
-    buildHomeAppBar(), // Placeholder for Profile screen
+    buildAuctionAppBar(), // Home screen widget
+    buildSecondAppBar(), // Placeholder for Messages screen
+    buildSettingsAppBar(), // Placeholder for Profile screen
   ];
 
   void _onItemTapped(int index) {

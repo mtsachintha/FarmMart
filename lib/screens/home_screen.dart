@@ -1,7 +1,8 @@
+import 'package:farm_application/screens/detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:farm_application/colors.dart';
-import '../models/Product.dart';
+import 'package:farm_application/models/product.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -64,133 +65,146 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: products.map((item) {
                         return SizedBox(
                           width: itemWidth,
-                          child: Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            clipBehavior: Clip.antiAliasWithSaveLayer,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  // Image widget
-                                  Image.network(
-                                    item.thumbnail,
-                                    height: 160,
-                                    width: 240,
-                                    fit: BoxFit.cover,
-                                  ),
-                                  SizedBox(
-                                      height:
-                                          8), // Space between image and text
-                                  // First text area
-                                  Text(
-                                    item.name,
-                                    style: TextStyle(
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.w500,
+                          child: InkWell(
+                            onTap: () {
+                              // Navigate to details page
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      ProductDetailScreen(product: item),
+                                ),
+                              );
+                            },
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              clipBehavior: Clip.antiAliasWithSaveLayer,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    // Image widget
+                                    Image.network(
+                                      item.thumbnail,
+                                      height: 160,
+                                      width: 240,
+                                      fit: BoxFit.cover,
                                     ),
-                                  ),
-                                  SizedBox(
-                                      height:
-                                          2), // Space between title and subtitle
-                                  // Second text area
-                                  Text(
-                                    "Sub title",
-                                    style: TextStyle(
-                                      fontSize: 14.0,
+                                    SizedBox(
+                                        height:
+                                            8), // Space between image and text
+                                    // First text area
+                                    Text(
+                                      item.name,
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                      height:
-                                          2), // Space between subtitle and description
-                                  Text(
-                                    "MyStringsSample.card_text",
-                                    maxLines: 2,
-                                    style: TextStyle(
-                                      fontSize: 12.0,
+                                    SizedBox(
+                                        height:
+                                            2), // Space between title and subtitle
+                                    // Second text area
+                                    Text(
+                                      "Sub title",
+                                      style: TextStyle(
+                                        fontSize: 14.0,
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                      height:
-                                          24), // Space between description and footer
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: <Widget>[
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment
-                                            .end, // Aligns text to the right
-                                        children: <Widget>[
-                                          Text(
-                                            "Ends In:",
-                                            style: TextStyle(
-                                              fontSize: 12.0,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          SizedBox(
-                                              width:
-                                                  4), // Spacing between texts
-                                          Text(
-                                            "2 Days",
-                                            style: TextStyle(fontSize: 12.0),
-                                          ),
-                                        ],
+                                    SizedBox(
+                                        height:
+                                            2), // Space between subtitle and description
+                                    Text(
+                                      "MyStringsSample.card_text",
+                                      maxLines: 2,
+                                      style: TextStyle(
+                                        fontSize: 12.0,
                                       ),
-                                      SizedBox(height: 4),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment
-                                            .end, // Aligns text to the right
-                                        children: <Widget>[
-                                          Text(
-                                            "Buy Now:",
-                                            style: TextStyle(
-                                              fontSize: 14.0,
-                                              fontWeight: FontWeight.bold,
+                                    ),
+                                    SizedBox(
+                                        height:
+                                            24), // Space between description and footer
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: <Widget>[
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment
+                                              .end, // Aligns text to the right
+                                          children: <Widget>[
+                                            Text(
+                                              "Ends In:",
+                                              style: TextStyle(
+                                                fontSize: 12.0,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
-                                          ),
-                                          SizedBox(
-                                              width:
-                                                  4), // Spacing between texts
-                                          Text(
-                                            "Rs. 2M",
-                                            style: TextStyle(
-                                              fontSize: 14.0,
-                                              fontWeight: FontWeight.bold,
+                                            SizedBox(
+                                                width:
+                                                    4), // Spacing between texts
+                                            Text(
+                                              "2 Days",
+                                              style: TextStyle(fontSize: 12.0),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(height: 4),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment
-                                            .end, // Aligns text to the right
-                                        children: <Widget>[
-                                          Text(
-                                            "Bid:",
-                                            style: TextStyle(
-                                              fontSize: 18.0,
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.deepOrange,
+                                          ],
+                                        ),
+                                        SizedBox(height: 4),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment
+                                              .end, // Aligns text to the right
+                                          children: <Widget>[
+                                            Text(
+                                              "Buy Now:",
+                                              style: TextStyle(
+                                                fontSize: 14.0,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
-                                          ),
-                                          SizedBox(
-                                              width:
-                                                  4), // Spacing between texts
-                                          Text(
-                                            "Rs. 1.6M",
-                                            style: TextStyle(
-                                              fontSize: 18.0,
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.deepOrange,
+                                            SizedBox(
+                                                width:
+                                                    4), // Spacing between texts
+                                            Text(
+                                              "Rs. 2M",
+                                              style: TextStyle(
+                                                fontSize: 14.0,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                          ],
+                                        ),
+                                        SizedBox(height: 4),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment
+                                              .end, // Aligns text to the right
+                                          children: <Widget>[
+                                            Text(
+                                              "Bid:",
+                                              style: TextStyle(
+                                                fontSize: 18.0,
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.deepOrange,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                                width:
+                                                    4), // Spacing between texts
+                                            Text(
+                                              "Rs. 1.6M",
+                                              style: TextStyle(
+                                                fontSize: 18.0,
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.deepOrange,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -232,6 +246,7 @@ AppBar buildHomeAppBar() {
 
   return AppBar(
     titleSpacing: 0.0,
+    backgroundColor: AppColors.darkGreen,
     title: Row(
       children: <Widget>[
         Padding(
