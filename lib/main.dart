@@ -1,13 +1,15 @@
-import 'package:farm_application/screens/settings_screen.dart';
+import 'package:farm_application/screens/main/settings_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-// Import the screen with the AppBar
-import 'screens/home_screen.dart'; // Import the screen with the AppBar
-// Import the screen with the AppBar
-import 'screens/auction_screen.dart'; // Import the screen with the AppBar
-import 'screens/chat_screen.dart'; // Import the screen with the AppBar
+import 'screens/main/home_screen.dart';
+import 'screens/onboarding/intro_page.dart';
+import 'screens/onboarding/login.dart';
+import 'screens/orderConfirmation/order_summary.dart';
+import 'screens/orderConfirmation/bidding_screen.dart';
+import 'screens/orderConfirmation/payment_screen.dart';
+import 'screens/main/auction_screen.dart';
+import 'screens/main/chat_screen.dart';
 import 'colors.dart';
-// Import the screen with the AppBar
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,12 +28,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: BuildHomeScreen(), // Use HomeScreen as the main screen
+      initialRoute: '/', // Starting route
+      routes: {
+        '/': (context) => BuildHomeScreen(),
+        '/main': (context) => BuildHomeScreen(),
+        '/login': (context) => PaymentScreen(),
+      },
     );
   }
 }
 
-// Define your MyHomeScreen widget here
 class BuildHomeScreen extends StatefulWidget {
   @override
   _BuildHomeScreenState createState() => _BuildHomeScreenState();
@@ -40,22 +46,22 @@ class BuildHomeScreen extends StatefulWidget {
 class _BuildHomeScreenState extends State<BuildHomeScreen> {
   int _selectedIndex = 0;
 
-  // Define the different screens you want to navigate to
   final List<Widget> _screens = [
-    HomeScreen(), // Home screen widget
-    AuctionScreen(), // Placeholder for Auction screen
+    HomeScreen(),
+    AuctionScreen(),
     ChatListScreen(),
     SettingsScreen()
   ];
 
   final List<AppBar> _appBars = [
-    buildHomeAppBar(), // Home screen widget
-    buildAuctionAppBar(), // Home screen widget
-    buildSecondAppBar(), // Placeholder for Messages screen
-    buildSettingsAppBar(), // Placeholder for Profile screen
+    buildHomeAppBar(),
+    buildAuctionAppBar(),
+    buildSecondAppBar(),
+    buildSettingsAppBar(),
   ];
 
   void _onItemTapped(int index) {
+    if (!mounted) return; // Prevent calling setState on an unmounted widget
     setState(() {
       _selectedIndex = index;
     });
@@ -65,21 +71,21 @@ class _BuildHomeScreenState extends State<BuildHomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appBars[_selectedIndex],
-      body: _screens[_selectedIndex], // Display the selected screen
+      body: _screens[_selectedIndex],
       bottomNavigationBar: NavigationBarTheme(
         data: NavigationBarThemeData(
-          indicatorColor: Colors.transparent, // Remove indicator
+          indicatorColor: Colors.transparent,
           labelTextStyle: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
               return TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.foreOrange); // Selected label color
+                  color: AppColors.foreOrange);
             }
             return TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 10,
-                color: AppColors.defaultGray); // Unselected label color
+                color: AppColors.defaultGray);
           }),
         ),
         child: NavigationBar(
@@ -88,27 +94,24 @@ class _BuildHomeScreenState extends State<BuildHomeScreen> {
           destinations: const <NavigationDestination>[
             NavigationDestination(
               icon: Icon(Icons.home_outlined),
-              selectedIcon: Icon(Icons.home,
-                  color: AppColors.foreOrange), // Selected icon color
-              label: 'Home', // Empty label
+              selectedIcon: Icon(Icons.home, color: AppColors.foreOrange),
+              label: 'Home',
             ),
             NavigationDestination(
               icon: Icon(Icons.gavel_outlined),
-              selectedIcon: Icon(Icons.gavel_rounded,
-                  color: AppColors.foreOrange), // Selected icon color
-              label: 'Auction', // Empty label
+              selectedIcon:
+                  Icon(Icons.gavel_rounded, color: AppColors.foreOrange),
+              label: 'Auction',
             ),
             NavigationDestination(
               icon: Icon(Icons.message_outlined),
-              selectedIcon: Icon(Icons.message,
-                  color: AppColors.foreOrange), // Selected icon color
-              label: 'Messages', // Empty label
+              selectedIcon: Icon(Icons.message, color: AppColors.foreOrange),
+              label: 'Messages',
             ),
             NavigationDestination(
               icon: Icon(Icons.person_outline),
-              selectedIcon: Icon(Icons.person,
-                  color: AppColors.foreOrange), // Selected icon color
-              label: 'Profile', // Empty label
+              selectedIcon: Icon(Icons.person, color: AppColors.foreOrange),
+              label: 'Profile',
             ),
           ],
         ),

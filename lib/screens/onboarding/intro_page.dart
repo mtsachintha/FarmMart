@@ -8,144 +8,132 @@ class IntroPage extends StatefulWidget {
 }
 
 class _IntroPageState extends State<IntroPage> {
-  PageController _pageController = PageController();
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
 
   void _nextPage() {
-    if (_pageController.hasClients) {
+    if (_currentPage < 2) {
       _pageController.nextPage(
         duration: Duration(milliseconds: 300),
         curve: Curves.easeIn,
       );
+    } else {
+      _navigateToMainScreen();
     }
+  }
+
+  void _navigateToMainScreen() {
+    // Replace this with the actual navigation logic
+    Navigator.pushReplacementNamed(context, '/login');
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
-        children: [
-          // Top section with logo and text
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: [
-                // Logo
-                SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: Image.asset(
-                    'assets/logo.png', // Replace with your logo asset path
-                    fit: BoxFit.cover,
+    return Scaffold(
+      backgroundColor: Colors.white, // Set a white background
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Top section with logo and text
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+              child: Align(
+                alignment: Alignment.centerLeft, // Aligns the logo to the left
+                child: Image.asset(
+                  'assets/logo_banner_black.png',
+                  height: 50,
+                ),
+              ),
+            ),
+            // PageView for sliding animation
+            Expanded(
+              child: PageView(
+                controller: _pageController,
+                onPageChanged: (index) {
+                  setState(() {
+                    _currentPage = index;
+                  });
+                },
+                children: [
+                  _buildPage('assets/intro_bg_1.png', 'Straight From Fields',
+                      "FarmMart connects farmers directly with buyers, ensuring fair prices for farmers and great deals for buyers."),
+                  _buildPage(
+                    'assets/intro_bg_2.png',
+                    'Fresh Produce',
+                    'Get fresh produce directly from the farm, ensuring the best quality and taste.',
                   ),
-                ),
-                SizedBox(width: 16), // Space between logo and text
-                // Text next to the logo
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'FarmMart',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.darkGreen,
-                      ),
-                    ),
-                    Text(
-                      'Straight From Fields',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          // PageView for sliding animation
-          Expanded(
-            child: PageView(
-              controller: _pageController,
-              children: [
-                _buildPage(
-                  'assets/intro_bg_1.png',
-                  'Straight From Fields',
-                  'FarmMart aims to eliminate middlemen, ensuring that farmers receive fair prices for their products while buyers get the best deals',
-                ),
-                _buildPage(
-                  'assets/intro_bg_2.png',
-                  'Fresh Produce',
-                  'Get fresh produce directly from the farm, ensuring the best quality and taste.',
-                ),
-                _buildPage(
-                  'assets/intro_bg_3.png',
-                  'Fresh Produce',
-                  'Get fresh produce directly from the farm, ensuring the best quality and taste.',
-                ),
-                // Add more pages as needed
-              ],
-            ),
-          ),
-          // Carousel indicator
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: SmoothPageIndicator(
-              controller: _pageController, // PageController
-              count: 3,
-              effect: WormEffect(
-                dotWidth: 8.0,
-                dotHeight: 8.0,
-                activeDotColor: AppColors.darkGreen,
-                dotColor: Colors.grey,
-              ), // your preferred effect
-            ),
-          ),
-          // Buttons on top of the image
-          Padding(
-            padding: const EdgeInsets.all(32.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.5),
-                    borderRadius: BorderRadius.circular(20.0),
+                  _buildPage(
+                    'assets/intro_bg_3.png',
+                    'Track and Manage',
+                    'Seamlessly manage your orders and shipments in one place.',
                   ),
-                  child: TextButton(
-                    onPressed: () {
-                      // handle skip
-                    },
-                    child: Text(
-                      'Skip',
-                      style: TextStyle(
+                ],
+              ),
+            ),
+            // Carousel indicator
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SmoothPageIndicator(
+                controller: _pageController, // PageController
+                count: 3,
+                effect: WormEffect(
+                  dotWidth: 8.0,
+                  dotHeight: 8.0,
+                  activeDotColor: AppColors.darkGreen,
+                  dotColor: Colors.grey,
+                ), // your preferred effect
+              ),
+            ),
+            // Buttons on top of the image
+            Padding(
+              padding: const EdgeInsets.all(32.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Skip button
+                  Container(
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: TextButton(
+                      onPressed: _navigateToMainScreen,
+                      child: Text(
+                        'Skip',
+                        style: TextStyle(
                           color: const Color.fromARGB(128, 128, 128, 128),
-                          fontWeight: FontWeight.w600),
+                          fontWeight: FontWeight.w600,
+                          decoration: TextDecoration.none,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(
-                  width: 240,
-                  height: 44,
-                  child: ElevatedButton(
-                    onPressed: _nextPage,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors
-                          .midGreen, // Change this to your desired color
-                    ),
-                    child: Text(
-                      'Next',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.white),
+                  // Next or Get Started button
+                  SizedBox(
+                    width: 240,
+                    height: 44,
+                    child: ElevatedButton(
+                      onPressed: _nextPage,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.darkGreen,
+                      ),
+                      child: Text(
+                        _currentPage == 2 ? 'Get Started' : 'Next',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          decoration: TextDecoration.none,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -161,9 +149,10 @@ class _IntroPageState extends State<IntroPage> {
               Text(
                 title,
                 style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
                   color: AppColors.darkGreen,
+                  decoration: TextDecoration.none,
                 ),
               ),
               SizedBox(height: 16),
@@ -172,8 +161,9 @@ class _IntroPageState extends State<IntroPage> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: const Color.fromARGB(128, 128, 128, 128),
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w500,
+                  decoration: TextDecoration.none,
                 ),
               ),
             ],
@@ -186,7 +176,7 @@ class _IntroPageState extends State<IntroPage> {
               Positioned.fill(
                 child: Image.asset(
                   imagePath,
-                  fit: BoxFit.cover,
+                  fit: BoxFit.fitWidth, // Ensures the image fits the width
                 ),
               ),
             ],

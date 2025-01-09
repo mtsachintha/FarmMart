@@ -12,52 +12,16 @@ class LoginPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Align(
-                alignment: Alignment.topLeft,
-                child: IconButton(
-                  icon: Icon(Icons.arrow_back),
-                  onPressed: () {
-                    // Handle back button press
-                  },
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                child: Align(
+                  alignment: Alignment.center, // Aligns the logo to the left
+                  child: Image.asset(
+                    'assets/logo_banner_black.png', // Replace with your logo asset path
+                    height: 90,
+                  ),
                 ),
-              ),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Logo
-                  SizedBox(
-                    width: 54,
-                    height: 54,
-                    child: Image.asset(
-                      'assets/logo.png', // Replace with your logo asset path
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  SizedBox(width: 24), // Space between logo and text
-                  // Text next to the logo
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'FarmMart',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.darkGreen,
-                        ),
-                      ),
-                      Text(
-                        'Straight From Fields',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.grey[700],
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
               ),
               SizedBox(height: 60),
               ConstrainedBox(
@@ -102,11 +66,11 @@ class LoginPage extends StatelessWidget {
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  // Handle login
+                  Navigator.pushReplacementNamed(context, '/main');
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.darkGreen,
-                  padding: EdgeInsets.symmetric(horizontal: 120, vertical: 24),
+                  padding: EdgeInsets.symmetric(horizontal: 120, vertical: 16),
                   textStyle: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -123,7 +87,7 @@ class LoginPage extends StatelessWidget {
                 },
                 style: OutlinedButton.styleFrom(
                     padding:
-                        EdgeInsets.symmetric(horizontal: 115, vertical: 21),
+                        EdgeInsets.symmetric(horizontal: 115, vertical: 16),
                     textStyle: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,

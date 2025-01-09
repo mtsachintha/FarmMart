@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../colors.dart';
-import '../models/product.dart';
+import '../../colors.dart';
+import '../../models/product.dart';
+import 'package:farm_application/screens/orderConfirmation/bidding_screen.dart';
 
 class ProductDetailScreen extends StatelessWidget {
   final Product product;
@@ -52,14 +53,40 @@ class ProductDetailScreen extends StatelessWidget {
                 SizedBox(
                   height: 300,
                   child: Stack(
+                    alignment: Alignment
+                        .bottomCenter, // Align elements to the bottom center
                     children: [
+                      // PageView for sliding images
                       PageView(
                         children: product.images.map((imageUrl) {
                           return Image.network(
                             imageUrl,
                             fit: BoxFit.cover,
+                            width: double.infinity,
                           );
                         }).toList(),
+                      ),
+                      // Static Indicators
+                      Positioned(
+                        bottom:
+                            10, // Position the indicators slightly above the bottom
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children:
+                              List.generate(product.images.length, (index) {
+                            return Container(
+                              margin: EdgeInsets.symmetric(horizontal: 4),
+                              width: 8,
+                              height: 8,
+                              decoration: BoxDecoration(
+                                color: index == 0
+                                    ? Colors.white
+                                    : Colors.grey, // Highlight the first dot
+                                shape: BoxShape.circle,
+                              ),
+                            );
+                          }),
+                        ),
                       ),
                     ],
                   ),
@@ -77,12 +104,16 @@ class ProductDetailScreen extends StatelessWidget {
                 children: [
                   Text(
                     product.name,
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                   ),
-                  SizedBox(height: 4),
+                  SizedBox(height: 2),
                   Text(
                     'by ${product.seller}',
-                    style: TextStyle(color: Colors.grey, fontSize: 16),
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 16,
+                      fontStyle: FontStyle.italic,
+                    ),
                   ),
                   SizedBox(height: 16),
                   Row(
@@ -95,7 +126,7 @@ class ProductDetailScreen extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(width: 8),
+                      SizedBox(width: 4),
                       if (product.bidNow < product.buyNow) // If discounted
                         Text(
                           '\$${product.bidNow.toStringAsFixed(2)}',
@@ -109,7 +140,7 @@ class ProductDetailScreen extends StatelessWidget {
                   SizedBox(height: 16),
                   Text(
                     'Description',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                   ),
                   SizedBox(height: 8),
                   Text(
@@ -150,7 +181,7 @@ class ProductDetailScreen extends StatelessWidget {
                               // Action for Buy
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.midOrange,
+                              backgroundColor: AppColors.midDarkGreen,
                               foregroundColor: Colors.white,
                               padding: EdgeInsets.symmetric(vertical: 8.0),
                               shape: RoundedRectangleBorder(
@@ -168,10 +199,14 @@ class ProductDetailScreen extends StatelessWidget {
                         Expanded(
                           child: ElevatedButton(
                             onPressed: () {
-                              // Action for Bid
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => BiddingScreen()),
+                              );
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.foreOrange,
+                              backgroundColor: AppColors.darkGreen,
                               foregroundColor: Colors.white,
                               padding: EdgeInsets.symmetric(vertical: 8.0),
                               shape: RoundedRectangleBorder(

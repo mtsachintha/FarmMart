@@ -1,4 +1,4 @@
-import 'package:farm_application/screens/detail_screen.dart';
+import 'package:farm_application/screens/main/detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:farm_application/colors.dart';
@@ -48,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                _buildTextButton("Active"),
+                _buildTextButton("Filters"),
                 _buildTextButton("Sort By"),
                 _buildTextButton("Type"),
               ],
@@ -99,8 +99,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     // First text area
                                     Text(
                                       item.name,
+                                      maxLines: 1,
                                       style: TextStyle(
-                                        fontSize: 16.0,
+                                        fontSize: 14.0,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
@@ -109,19 +110,31 @@ class _HomeScreenState extends State<HomeScreen> {
                                             2), // Space between title and subtitle
                                     // Second text area
                                     Text(
-                                      "Sub title",
+                                      item.seller,
                                       style: TextStyle(
-                                        fontSize: 14.0,
-                                      ),
+                                          fontSize: 12.0,
+                                          fontStyle: FontStyle.italic),
                                     ),
                                     SizedBox(
                                         height:
                                             2), // Space between subtitle and description
-                                    Text(
-                                      "MyStringsSample.card_text",
-                                      maxLines: 2,
-                                      style: TextStyle(
-                                        fontSize: 12.0,
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 8.0, vertical: 4.0),
+                                      decoration: BoxDecoration(
+                                        color: AppColors
+                                            .defaultGray, // Background color
+                                        borderRadius: BorderRadius.circular(
+                                            4.0), // Rounded corners
+                                      ),
+                                      child: Text(
+                                        item.quantity,
+                                        maxLines: 2,
+                                        style: TextStyle(
+                                          fontSize: 12.0,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.white, // Text color
+                                        ),
                                       ),
                                     ),
                                     SizedBox(
@@ -291,7 +304,7 @@ AppBar buildHomeAppBar() {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: IconButton(
-            icon: Icon(Icons.bookmarks_outlined),
+            icon: Icon(Icons.bookmarks_outlined, color: Colors.white),
             onPressed: () {
               // Action for account icon tap
             },

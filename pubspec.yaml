@@ -47,7 +47,8 @@ flutter:
     - assets/intro_bg_3.png
     - assets/logo.png
     - assets/logo_banner.png
+    - assets/logo_banner_black.png
     - assets/fb_icon.png
     - assets/google_icon.png
-    - assets/Linked_icon.png
+    - assets/linked_icon.png
 
