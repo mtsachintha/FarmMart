@@ -67,6 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           width: itemWidth,
                           child: InkWell(
                             onTap: () {
+                              final String userId = "@evogreenhouse"; //changed here
                               // Navigate to details page
                               Navigator.push(
                                 context,
@@ -230,7 +231,21 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+Future<void> addFYP(String userId, String keyword) async {
+    try {
+      DocumentReference docRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId);
 
+      await docRef.update({
+        'fyp': FieldValue.arrayUnion([keyword]),
+      });
+
+      print("keyword added successfully!");
+    } catch (e) {
+      print("keyword updating hobbies: $e");
+    }
+  }
   Widget _buildTextButton(String text) {
     return TextButton.icon(
       onPressed: () {
