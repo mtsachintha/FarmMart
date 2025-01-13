@@ -67,6 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           width: itemWidth,
                           child: InkWell(
                             onTap: () {
+                              final String userId = "@evogreenhouse"; //changed here
                               // Navigate to details page
                               Navigator.push(
                                 context,
