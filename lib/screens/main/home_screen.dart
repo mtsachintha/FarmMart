@@ -273,10 +273,11 @@ Future<void> addFYP(String userId, String keyword) async {
     );
   }
 
-  Widget _buildBannerButton(String text, IconData icon, Color color) {
+  Widget _buildBannerButton(
+      String text, IconData icon, Color color, VoidCallback onclickFun) {
     return TextButton.icon(
       onPressed: () {
-        // Add your onPressed function here
+        onclickFun();
       },
       icon: Icon(
         icon,
@@ -303,7 +304,6 @@ Future<void> addFYP(String userId, String keyword) async {
       ),
     );
   }
-}
 
 AppBar buildHomeAppBar() {
   const double searchBarHeight = 36.0;
