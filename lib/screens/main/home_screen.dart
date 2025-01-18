@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:farm_application/colors.dart';
 import 'package:farm_application/models/product.dart';
+import 'dart:math';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -11,7 +12,10 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
-  List<Product> products = []; // List to hold the fetched Product objects
+  List<Product> products = [];
+  final String userId = "@evogreenhouse";
+  List<String> keywords = ["Premium", "Organic", "Rice", "Farm"];
+  List<Map<String, dynamic>> results = [];
 
   @override
   void initState() {
@@ -20,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void fetchProducts() async {
-    // Fetch documents from Firestore collection 'listings'
+    print("fetchProducts function called");
     QuerySnapshot querySnapshot = await firestore.collection('listings').get();
 
     setState(() {
@@ -28,6 +32,58 @@ class _HomeScreenState extends State<HomeScreen> {
           .map((doc) => Product.fromMap(doc.data() as Map<String, dynamic>))
           .toList();
     });
+  }
+
+  Future<List<Map<String, dynamic>>> searchWithMultipleKeywords(
+      List<String> keywords) async {
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    List<Map<String, dynamic>> results = [];
+
+    try {
+      for (String keyword in keywords) {
+        // Perform a query for each keyword
+        QuerySnapshot querySnapshot = await firestore
+            .collection('listings')
+            .where('name', isGreaterThanOrEqualTo: keyword)
+            .where('name', isLessThanOrEqualTo: keyword + '\uf8ff')
+            .get();
+
+        // Add each result to the results list
+        for (var doc in querySnapshot.docs) {
+          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+
+          // Avoid adding duplicates (if needed)
+          if (!results.any((element) => element['id'] == doc.id)) {
+            results.add({...data, 'id': doc.id}); // Include document ID
+          }
+        }
+      }
+
+      return results;
+    } catch (e) {
+      print('Error fetching documents: $e');
+      return [];
+    }
+  }
+
+  void fypProducts() async {
+    print("fypProducts function called");
+
+    try {
+      print("Before searchWithMultipleKeywords");
+      results = await searchWithMultipleKeywords(keywords);
+      print("After searchWithMultipleKeywords: $results");
+
+      List<Product> fetchedProducts =
+          results.map((result) => Product.fromMap(result)).toList();
+
+      setState(() {
+        products = fetchedProducts;
+        print("Products updated in setState: $products");
+      });
+    } catch (e) {
+      print("Error fetching products: $e");
+    }
   }
 
   void _onItemTapped(int index) {
@@ -44,13 +100,20 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 24.0, vertical: 4.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                _buildTextButton("Filters"),
-                _buildTextButton("Sort By"),
-                _buildTextButton("Type"),
+                _buildBannerButton(
+                    "For you", Icons.star, AppColors.yellow, fypProducts),
+                SizedBox(width: 8),
+                _buildBannerButton("Trending", Icons.local_fire_department,
+                    AppColors.midOrange, fypProducts),
+                SizedBox(width: 8),
+                _buildBannerButton("Following", Icons.store,
+                    AppColors.defaultGray, fypProducts),
+                //_buildTextButton("Filters"),
               ],
             ),
           ),
@@ -67,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           width: itemWidth,
                           child: InkWell(
                             onTap: () {
-                              // Navigate to details page
+                              addFYP(userId, item.name);
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -231,6 +294,45 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Future<void> addFYP(String userId, String keyword) async {
+    try {
+      DocumentReference docRef =
+          FirebaseFirestore.instance.collection('users').doc(userId);
+
+      // Fetch the current array
+      DocumentSnapshot docSnapshot = await docRef.get();
+      if (docSnapshot.exists) {
+        // Cast the document data to a Map
+        Map<String, dynamic> data = docSnapshot.data() as Map<String, dynamic>;
+
+        // Safely get the 'fyp' field
+        List<dynamic> currentArray = (data['fyp'] ?? []) as List<dynamic>;
+
+        if (currentArray.length < 10) {
+          // Add new keyword if array length is less than 10
+          await docRef.update({
+            'fyp': FieldValue.arrayUnion([keyword]),
+          });
+        } else {
+          // Replace a random index with the new keyword if array length is 10
+          int randomIndex =
+              Random().nextInt(10); // Random index between 0 and 9
+          currentArray[randomIndex] = keyword;
+
+          // Update the entire array in Firestore
+          await docRef.update({
+            'fyp': currentArray,
+          });
+        }
+      } else {
+        // Handle the case where the document doesn't exist
+        print("Document does not exist");
+      }
+    } catch (e) {
+      print("keyword updating hobbies: $e");
+    }
+  }
+
   Widget _buildTextButton(String text) {
     return TextButton.icon(
       onPressed: () {
@@ -249,6 +351,38 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       style: TextButton.styleFrom(
         backgroundColor: Colors.transparent,
+      ),
+    );
+  }
+
+  Widget _buildBannerButton(
+      String text, IconData icon, Color color, VoidCallback onclickFun) {
+    return TextButton.icon(
+      onPressed: () {
+        onclickFun();
+      },
+      icon: Icon(
+        icon,
+        color: color,
+      ),
+      label: Text(
+        text,
+        style: TextStyle(
+          fontSize: 12.0,
+          fontWeight: FontWeight.w500,
+          color: AppColors.defaultGray,
+        ),
+      ),
+      style: TextButton.styleFrom(
+        backgroundColor: Colors.transparent,
+        side: BorderSide(
+          color: AppColors.midGray,
+          width: 1.0, // Thin border
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius:
+              BorderRadius.circular(8.0), // Optional: adds rounded corners
+        ),
       ),
     );
   }
