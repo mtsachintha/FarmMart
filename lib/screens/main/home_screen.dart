@@ -66,6 +66,26 @@ class _HomeScreenState extends State<HomeScreen> {
                         return SizedBox(
                           width: itemWidth,
                           child: InkWell(
+
+                                void fypProducts() async {
+                                  print("fypProducts function called");
+
+                                  try {
+                                    print("Before searchWithMultipleKeywords");
+                                    results = await searchWithMultipleKeywords(keywords);
+                                    print("After searchWithMultipleKeywords: $results");
+
+                                    List<Product> fetchedProducts =
+                                        results.map((result) => Product.fromMap(result)).toList();
+
+                                    setState(() {
+                                      products = fetchedProducts;
+                                      print("Products updated in setState: $products");
+                                    });
+                                  } catch (e) {
+                                    print("Error fetching products: $e");
+                                  }
+                                }
                             onTap: () {
                               // Navigate to details page
                               Navigator.push(
