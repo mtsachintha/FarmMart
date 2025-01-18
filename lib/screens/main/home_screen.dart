@@ -29,7 +29,37 @@ class _HomeScreenState extends State<HomeScreen> {
           .toList();
     });
   }
+Future<List<Map<String, dynamic>>> searchWithMultipleKeywords(
+      List<String> keywords) async {
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    List<Map<String, dynamic>> results = [];
 
+    try {
+      for (String keyword in keywords) {
+        // Perform a query for each keyword
+        QuerySnapshot querySnapshot = await firestore
+            .collection('listings')
+            .where('name', isGreaterThanOrEqualTo: keyword)
+            .where('name', isLessThanOrEqualTo: keyword + '\uf8ff')
+            .get();
+
+        // Add each result to the results list
+        for (var doc in querySnapshot.docs) {
+          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+
+          // Avoid adding duplicates (if needed)
+          if (!results.any((element) => element['id'] == doc.id)) {
+            results.add({...data, 'id': doc.id}); // Include document ID
+          }
+        }
+      }
+
+      return results;
+    } catch (e) {
+      print('Error fetching documents: $e');
+      return [];
+    }
+  }
   void _onItemTapped(int index) {
     setState(() {});
     // Handle navigation logic here based on the selected index
