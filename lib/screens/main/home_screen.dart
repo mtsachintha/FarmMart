@@ -129,6 +129,26 @@ class _HomeScreenState extends State<HomeScreen> {
                         return SizedBox(
                           width: itemWidth,
                           child: InkWell(
+
+                                void fypProducts() async {
+                                  print("fypProducts function called");
+
+                                  try {
+                                    print("Before searchWithMultipleKeywords");
+                                    results = await searchWithMultipleKeywords(keywords);
+                                    print("After searchWithMultipleKeywords: $results");
+
+                                    List<Product> fetchedProducts =
+                                        results.map((result) => Product.fromMap(result)).toList();
+
+                                    setState(() {
+                                      products = fetchedProducts;
+                                      print("Products updated in setState: $products");
+                                    });
+                                  } catch (e) {
+                                    print("Error fetching products: $e");
+                                  }
+                                }
                             onTap: () {
                               addFYP(userId, item.name);
                               Navigator.push(
@@ -293,6 +313,15 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
+Future<void> addFYP(String userId, String keyword) async {
+    try {
+      DocumentReference docRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId);
+      await docRef.update({
+        'fyp': FieldValue.arrayUnion([keyword]),
+      });
 
   Future<void> addFYP(String userId, String keyword) async {
     try {

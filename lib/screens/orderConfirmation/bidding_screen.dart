@@ -92,7 +92,7 @@ class _BiddingScreenState extends State<BiddingScreen> {
                         TextButton(
                           onPressed: () {},
                           child: const Text(
-                            "Bidding History >> ",
+                            "History >> ",
                             style: TextStyle(color: Colors.black54),
                           ),
                         ),
@@ -118,18 +118,77 @@ class _BiddingScreenState extends State<BiddingScreen> {
                       endIndent: 24.0,
                     ),
                     const SizedBox(height: 8),
-                    const Text("Highest Bid:"),
-                    const SizedBox(height: 8),
-                    const Center(
-                      child: Text(
-                        "1,200,000 LKR",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 18,
-                          color: AppColors.foreOrange,
-                        ),
+                    SizedBox(
+                      height:
+                          60, // Set a height to ensure the VerticalDivider is visible
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text("Current Bid:"),
+                              const SizedBox(height: 8),
+                              const Text.rich(
+                                TextSpan(
+                                  text: "1.2 M ", // Main text
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 18,
+                                    color: AppColors.foreOrange,
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                      text: "LKR", // Smaller, thinner text
+                                      style: TextStyle(
+                                        fontWeight:
+                                            FontWeight.w400, // Thin font weight
+                                        fontSize: 14,
+                                        color: AppColors.defaultGray,
+// Smaller font size
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const VerticalDivider(
+                            width: 32, // Spacing between items
+                            thickness: 2, // Divider thickness
+                            color: Colors.black12, // Divider color
+                          ),
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text("Recommonded:"),
+                              const SizedBox(height: 8),
+                              const Text.rich(
+                                TextSpan(
+                                  text: "1.25 M ", // Main text
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 18,
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                      text: "LKR", // Smaller, thinner text
+                                      style: TextStyle(
+                                        fontWeight:
+                                            FontWeight.w400, // Thin font weight
+                                        fontSize: 14,
+// Smaller font size
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
+
                     const SizedBox(height: 8),
                     Divider(
                       color: Colors.grey,
@@ -147,15 +206,20 @@ class _BiddingScreenState extends State<BiddingScreen> {
                             controller:
                                 TextEditingController(text: "1,200,000"),
                             style: const TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 18,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 16,
                             ),
+                            textAlign: TextAlign.center, // Center the text
+
                             decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(
+                                    16)), // Custom border radius
+                              ),
                             ),
                           ),
                         ),
-                        const SizedBox(width: 8.0),
+                        const SizedBox(width: 16.0),
                         const Text(
                           "LKR",
                           style: TextStyle(
@@ -163,9 +227,10 @@ class _BiddingScreenState extends State<BiddingScreen> {
                             fontSize: 16,
                           ),
                         ),
+                        const SizedBox(width: 16.0),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 32),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
