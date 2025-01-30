@@ -1,253 +1,326 @@
-import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:intl/intl.dart';
 import 'package:farm_application/colors.dart';
+import 'package:farm_application/screens/orderConfirmation/order_summary.dart';
+import 'package:flutter/material.dart';
 
-class AuctionScreen extends StatefulWidget {
+class BiddingScreen extends StatefulWidget {
   @override
-  _AuctionScreenState createState() => _AuctionScreenState();
+  _BiddingScreenState createState() => _BiddingScreenState();
 }
 
-class _AuctionScreenState extends State<AuctionScreen> {
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
-  List<DocumentSnapshot> auctions = [];
+class _BiddingScreenState extends State<BiddingScreen> {
+  String _selectedLoanType = "Custom"; // Default selected button
 
-  @override
-  void initState() {
-    super.initState();
-    fetchAuctions();
-  }
-
-  void fetchAuctions() async {
-    QuerySnapshot snapshot = await firestore.collection('auction').get();
+  void _onLoanTypeSelected(String loanType) {
     setState(() {
-      auctions = snapshot.docs;
+      _selectedLoanType = loanType; // Update the selected loan type
     });
-  }
-
-  String calculateTimeRemaining(DateTime endDate) {
-    final Duration remaining = endDate.difference(DateTime.now());
-    if (remaining.inDays > 0) {
-      return '${remaining.inDays} Days';
-    } else if (remaining.inHours > 0) {
-      return '${remaining.inHours} Hours';
-    } else if (remaining.inMinutes > 0) {
-      return '${remaining.inMinutes} Minutes';
-    } else {
-      return 'Ended';
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView.builder(
-        padding: EdgeInsets.all(16.0),
-        itemCount: auctions.length,
-        itemBuilder: (context, index) {
-          final auction = auctions[index].data() as Map<String, dynamic>;
-          final DateTime endDate = (auction['end'] as Timestamp).toDate();
-          return AuctionCard(
-            title: auction['title'] ?? '',
-            location: auction['location'] ?? '',
-            quantity: auction['quantity'] ?? 0,
-            status: auction['status'] ?? 'Active',
-            imageUrl: auction['imageUrl'] ?? 'https://via.placeholder.com/150',
-            start: (auction['start'] as Timestamp).toDate(),
-            end: endDate,
-            remaining: calculateTimeRemaining(endDate),
-            yourBid: auction['yourBid'] ?? 0,
-            bidIncrement: auction['bidIncrement'] ?? 0,
-            goingAt: auction['goingAt'] ?? 0,
-          );
-        },
+      resizeToAvoidBottomInset: true,
+      appBar: AppBar(
+        backgroundColor: AppColors.darkGreen,
+        title: const Text(
+          "Bidding",
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w500,
+            fontSize: 20.0, // Adjust the font size as needed
+          ),
+        ),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
+          onPressed: () {},
+        ),
       ),
-    );
-  }
-}
-
-class AuctionCard extends StatelessWidget {
-  final String title;
-  final String location;
-  final int quantity;
-  final String status;
-  final String imageUrl;
-  final DateTime start;
-  final DateTime end;
-  final String remaining;
-  final int yourBid;
-  final int bidIncrement;
-  final int goingAt;
-
-  AuctionCard({
-    required this.title,
-    required this.location,
-    required this.quantity,
-    required this.status,
-    required this.imageUrl,
-    required this.start,
-    required this.end,
-    required this.remaining,
-    required this.yourBid,
-    required this.bidIncrement,
-    required this.goingAt,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: 8.0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+      body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Image.network(
-                  imageUrl,
-                  height: 100,
-                  width: 100,
-                  fit: BoxFit.cover,
-                ),
-                SizedBox(width: 16.0),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: TextStyle(
-                          color: Colors.black87,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16.0,
-                        ),
-                      ),
-                      SizedBox(height: 4.0),
-                      Row(
-                        children: [
-                          Text('Location: ',
-                              style: TextStyle(color: Colors.black54)),
-                          SizedBox(width: 4.0),
-                          Text(location,
-                              style: TextStyle(
-                                  color: Colors.black54,
-                                  fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                      SizedBox(height: 4.0),
-                      Row(
-                        children: [
-                          Text('Quantity: ',
-                              style: TextStyle(color: Colors.black54)),
-                          Text('$quantity Ton',
-                              style: TextStyle(
-                                  color: Colors.black54,
-                                  fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                      SizedBox(height: 8.0),
-                    ],
+            // Stepper Header
+            Container(
+              color: AppColors.lowDarkGreen,
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildStepperCircle(context, "1", true),
+                  Expanded(
+                    child: Divider(color: Colors.grey, thickness: 2),
                   ),
-                ),
-              ],
+                  _buildStepperCircle(context, "2", false),
+                  Expanded(
+                    child: Divider(color: Colors.grey, thickness: 2),
+                  ),
+                  _buildStepperCircle(context, "3", false),
+                ],
+              ),
             ),
-            Divider(height: 24.0, thickness: 1.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildDetailColumn('Start:', DateFormat.yMMMd().format(start)),
-                _buildDetailColumn('End:', DateFormat.yMMMd().format(end)),
-                _buildDetailColumn('Remaining:', remaining),
-              ],
-            ),
-            Divider(height: 24.0, thickness: 1.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildDetailColumn('Your Bid:',
-                    'Rs. ${NumberFormat.compact().format(yourBid)}'),
-                _buildDetailColumn('Bid Increment:',
-                    'Rs. ${NumberFormat.compact().format(bidIncrement)}'),
-                _buildDetailColumn('Going At:',
-                    'Rs. ${NumberFormat.compact().format(goingAt)}'),
-              ],
-            ),
-            SizedBox(height: 8.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
+
+            // Main Content
+            Card(
+              margin: const EdgeInsets.all(16),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text('Status: ',
-                        style: TextStyle(
-                            color: Colors.black54,
-                            fontWeight: FontWeight.bold)),
-                    SizedBox(width: 4.0),
-                    Text('Available',
-                        style: TextStyle(
-                            color: Colors.green, fontWeight: FontWeight.bold)),
+                    // Live bidding header
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            const SizedBox(width: 4.0),
+                            const Icon(Icons.circle,
+                                color: Colors.red, size: 12.0),
+                            const SizedBox(width: 8.0),
+                            const Text(
+                              "Live",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                        TextButton(
+                          onPressed: () {},
+                          child: const Text(
+                            "History >> ",
+                            style: TextStyle(color: Colors.black54),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+
+                    const Text("Ends In:"),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildTimeBox("16", "hrs"),
+                        _buildTimeBox("45", "min"),
+                        _buildTimeBox("28", "sec"),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Divider(
+                      color: Colors.grey,
+                      thickness: 1.0,
+                      indent: 24.0,
+                      endIndent: 24.0,
+                    ),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      height:
+                          60, // Set a height to ensure the VerticalDivider is visible
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text("Current Bid:"),
+                              const SizedBox(height: 8),
+                              const Text.rich(
+                                TextSpan(
+                                  text: "1.2 M ", // Main text
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 18,
+                                    color: AppColors.foreOrange,
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                      text: "LKR", // Smaller, thinner text
+                                      style: TextStyle(
+                                        fontWeight:
+                                            FontWeight.w400, // Thin font weight
+                                        fontSize: 14,
+                                        color: AppColors.defaultGray,
+// Smaller font size
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const VerticalDivider(
+                            width: 32, // Spacing between items
+                            thickness: 2, // Divider thickness
+                            color: Colors.black12, // Divider color
+                          ),
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text("Recommonded:"),
+                              const SizedBox(height: 8),
+                              const Text.rich(
+                                TextSpan(
+                                  text: "1.25 M ", // Main text
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 18,
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                      text: "LKR", // Smaller, thinner text
+                                      style: TextStyle(
+                                        fontWeight:
+                                            FontWeight.w400, // Thin font weight
+                                        fontSize: 14,
+// Smaller font size
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 8),
+                    Divider(
+                      color: Colors.grey,
+                      thickness: 1.0,
+                      indent: 24.0,
+                      endIndent: 24.0,
+                    ),
+                    const SizedBox(height: 8),
+                    const Text("Your Bid:"),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller:
+                                TextEditingController(text: "1,200,000"),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 16,
+                            ),
+                            textAlign: TextAlign.center, // Center the text
+
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(
+                                    16)), // Custom border radius
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16.0),
+                        const Text(
+                          "LKR",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w300,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(width: 16.0),
+                      ],
+                    ),
+                    const SizedBox(height: 32),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _buildLoanTypeButton("Custom"),
+                        _buildLoanTypeButton("Minimum"),
+                        _buildLoanTypeButton("Auto"),
+                      ],
+                    ),
                   ],
                 ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: IconButton(
-                    icon: Icon(Icons.launch, color: Colors.grey),
-                    onPressed: () {},
-                  ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.darkGreen,
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(double.infinity, 50),
                 ),
-              ],
-            )
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => OrderSummaryScreen()),
+                  );
+                },
+                child: const Text(
+                  'Next',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildDetailColumn(String label, String value) {
+  Widget _buildStepperCircle(BuildContext context, String step, bool isActive) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: TextStyle(color: Colors.black54)),
-        SizedBox(height: 4.0),
-        Text(value,
-            style:
-                TextStyle(color: Colors.black54, fontWeight: FontWeight.bold)),
+        CircleAvatar(
+          radius: 16,
+          backgroundColor: isActive ? AppColors.darkGreen : Colors.grey,
+          child: Text(
+            step,
+            style: const TextStyle(color: Colors.white),
+          ),
+        ),
+        const SizedBox(height: 4),
       ],
     );
   }
-}
 
-AppBar buildAuctionAppBar() {
-  return AppBar(
-    titleSpacing: 0.0,
-    backgroundColor: AppColors.darkGreen,
-    title: Row(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0),
-          child: Text(
-            "Auction",
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w500,
-              fontSize: 20.0, // Adjust the font size as needed
+  Widget _buildTimeBox(String value, String unit) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              color: Colors.grey[200],
+            ),
+            child: Text(
+              value,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
           ),
-        ),
-        Spacer(), // Pushes the icon to the right
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: IconButton(
-            icon: Icon(Icons.bookmarks_outlined, color: Colors.white),
-            onPressed: () {
-              // Action for bookmark icon tap
-            },
-          ),
-        ),
-      ],
-    ),
-  );
+          const SizedBox(height: 4),
+          Text(unit, style: const TextStyle(color: Colors.grey)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoanTypeButton(String label) {
+    bool isSelected = _selectedLoanType == label;
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        elevation: isSelected ? 2 : 0,
+        backgroundColor: isSelected ? AppColors.darkGreen : Colors.grey[200],
+        foregroundColor: isSelected ? Colors.white : Colors.black,
+      ),
+      onPressed: () {
+        _onLoanTypeSelected(label);
+      },
+      child: Text(label),
+    );
+  }
 }

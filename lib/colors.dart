@@ -24,4 +24,6 @@ class AppColors {
   static const Color midOrange = Color(0xFFFF885B);
   static const Color lowDarkGreen = Color(0xFFE9EFEC);
   static const Color midDarkGreen = Color(0xFF6A9C89);
+  static const Color yellow = Color(0xFFFFD700); 
+  static const Color midGray = Color(0xFFFFD700); 
 }
