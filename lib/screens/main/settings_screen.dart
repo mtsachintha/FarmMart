@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:farm_application/colors.dart';
+import 'package:farm_application/screens/main/add_product.dart';
 
 void main() {
   runApp(MaterialApp(home: SettingsScreen()));
@@ -46,7 +47,10 @@ class SettingsScreen extends StatelessWidget {
                 size: 16.0, // Smaller icon size
               ),
               onTap: () {
-                // Handle linked accounts tap
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AddProductPage()),
+                );
               },
             ),
             Divider(),

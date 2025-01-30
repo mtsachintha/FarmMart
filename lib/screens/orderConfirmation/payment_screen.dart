@@ -57,9 +57,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
               child: Column(
                 children: [
                   // Saved Cards Section
-                  _buildSavedCardSection(),
-                  _buildSavedCardSection(),
-                  _buildSavedCardSection(),
+                  _buildSavedCardSection("Sales Agreement", ""),
+                  _buildSavedCardSection("Export Certification", ""),
+                  _buildSavedCardSection("Payment Details", ""),
                 ],
               ),
             ),
@@ -125,7 +125,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     );
   }
 
-  Widget _buildSavedCardSection() {
+  Widget _buildSavedCardSection(String title, String subtitle) {
     return Card(
       margin: const EdgeInsets.all(8),
       child: Padding(
@@ -135,12 +135,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
-                    "HDFC Bank Credit Card",
+                    title,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Text("**** **** **** 434"),
+                  Text(subtitle),
                 ],
               ),
             ),
@@ -152,7 +152,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 backgroundColor: AppColors.darkGreen,
               ),
               child: const Text(
-                "Enter CVV",
+                "Download",
                 style: TextStyle(color: Colors.white),
               ),
             ),
