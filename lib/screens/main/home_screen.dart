@@ -48,9 +48,14 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                _buildTextButton("Filters"),
-                _buildTextButton("Sort By"),
-                _buildTextButton("Type"),
+                _buildBannerButton("For you", Icons.star, AppColors.yellow),
+                SizedBox(width: 8),
+                _buildBannerButton("Trending", Icons.local_fire_department,
+                    AppColors.midOrange),
+                SizedBox(width: 8),
+                _buildBannerButton(
+                    "Following", Icons.store, AppColors.defaultGray),
+                //_buildTextButton("Filters"),
               ],
             ),
           ),
@@ -87,6 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   }
                                 }
                             onTap: () {
+                              final String userId = "@evogreenhouse"; //changed here
                               // Navigate to details page
                               Navigator.push(
                                 context,
@@ -251,12 +257,12 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+
 Future<void> addFYP(String userId, String keyword) async {
     try {
       DocumentReference docRef = FirebaseFirestore.instance
           .collection('users')
           .doc(userId);
-
       await docRef.update({
         'fyp': FieldValue.arrayUnion([keyword]),
       });
@@ -285,6 +291,37 @@ Future<void> addFYP(String userId, String keyword) async {
       ),
       style: TextButton.styleFrom(
         backgroundColor: Colors.transparent,
+      ),
+    );
+  }
+
+  Widget _buildBannerButton(String text, IconData icon, Color color) {
+    return TextButton.icon(
+      onPressed: () {
+        // Add your onPressed function here
+      },
+      icon: Icon(
+        icon,
+        color: color,
+      ),
+      label: Text(
+        text,
+        style: TextStyle(
+          fontSize: 12.0,
+          fontWeight: FontWeight.w500,
+          color: AppColors.defaultGray,
+        ),
+      ),
+      style: TextButton.styleFrom(
+        backgroundColor: Colors.transparent,
+        side: BorderSide(
+          color: AppColors.midGray,
+          width: 1.0, // Thin border
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius:
+              BorderRadius.circular(8.0), // Optional: adds rounded corners
+        ),
       ),
     );
   }
