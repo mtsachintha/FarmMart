@@ -10,19 +10,60 @@ class AuctionScreen extends StatefulWidget {
 
 class _AuctionScreenState extends State<AuctionScreen> {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
-  List<DocumentSnapshot> auctions = [];
+  List<AuctionCard> auctions = [];
 
   @override
   void initState() {
     super.initState();
-    fetchAuctions();
+    fetchUserAuctions();
   }
 
-  void fetchAuctions() async {
-    QuerySnapshot snapshot = await firestore.collection('auction').get();
-    setState(() {
-      auctions = snapshot.docs;
-    });
+  void fetchUserAuctions() async {
+    DocumentSnapshot userSnapshot =
+        await firestore.collection('users').doc('@evogreenhouse').get();
+    if (userSnapshot.exists) {
+      Map<String, dynamic>? userData =
+          userSnapshot.data() as Map<String, dynamic>?;
+      Map<String, dynamic>? auctionMap =
+          userData?['auction'] as Map<String, dynamic>?;
+
+      if (auctionMap != null) {
+        List<AuctionCard> auctionCards = [];
+        for (var entry in auctionMap.entries) {
+          String itemId = entry.value['itemId'];
+          int yourBid = int.tryParse(entry.value['bid'].toString()) ?? 0;
+
+          DocumentSnapshot listingSnapshot =
+              await firestore.collection('listings').doc(itemId).get();
+          if (listingSnapshot.exists) {
+            Map<String, dynamic>? listingData =
+                listingSnapshot.data() as Map<String, dynamic>?;
+
+            if (listingData != null) {
+              DateTime endDate = (listingData['end'] as Timestamp).toDate();
+              auctionCards.add(AuctionCard(
+                title: listingData['name'] ?? '',
+                location: listingData['location'] ?? '',
+                quantity: listingData['quantity'] ?? "0",
+                status:
+                    DateTime.now().isBefore(endDate) ? 'Available' : 'Expired',
+                imageUrl: listingData['thumbnail'] ??
+                    'https://via.placeholder.com/150',
+                start: (listingData['start'] as Timestamp).toDate(),
+                end: endDate,
+                remaining: calculateTimeRemaining(endDate),
+                yourBid: yourBid,
+                bidIncrement: listingData['bidIncrement'] ?? 0,
+                goingAt: listingData['goingAt'] ?? 0,
+              ));
+            }
+          }
+        }
+        setState(() {
+          auctions = auctionCards;
+        });
+      }
+    }
   }
 
   String calculateTimeRemaining(DateTime endDate) {
@@ -45,21 +86,7 @@ class _AuctionScreenState extends State<AuctionScreen> {
         padding: EdgeInsets.all(16.0),
         itemCount: auctions.length,
         itemBuilder: (context, index) {
-          final auction = auctions[index].data() as Map<String, dynamic>;
-          final DateTime endDate = (auction['end'] as Timestamp).toDate();
-          return AuctionCard(
-            title: auction['title'] ?? '',
-            location: auction['location'] ?? '',
-            quantity: auction['quantity'] ?? 0,
-            status: auction['status'] ?? 'Active',
-            imageUrl: auction['imageUrl'] ?? 'https://via.placeholder.com/150',
-            start: (auction['start'] as Timestamp).toDate(),
-            end: endDate,
-            remaining: calculateTimeRemaining(endDate),
-            yourBid: auction['yourBid'] ?? 0,
-            bidIncrement: auction['bidIncrement'] ?? 0,
-            goingAt: auction['goingAt'] ?? 0,
-          );
+          return auctions[index];
         },
       ),
     );
@@ -69,7 +96,7 @@ class _AuctionScreenState extends State<AuctionScreen> {
 class AuctionCard extends StatelessWidget {
   final String title;
   final String location;
-  final int quantity;
+  final String quantity;
   final String status;
   final String imageUrl;
   final DateTime start;
@@ -92,6 +119,28 @@ class AuctionCard extends StatelessWidget {
     required this.bidIncrement,
     required this.goingAt,
   });
+
+  Widget _buildDetailColumn(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            color: Colors.black54,
+          ),
+        ),
+        SizedBox(height: 4.0),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 16.0,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -120,35 +169,15 @@ class AuctionCard extends StatelessWidget {
                       Text(
                         title,
                         style: TextStyle(
-                          color: Colors.black87,
                           fontWeight: FontWeight.bold,
                           fontSize: 16.0,
                         ),
                       ),
                       SizedBox(height: 4.0),
-                      Row(
-                        children: [
-                          Text('Location: ',
-                              style: TextStyle(color: Colors.black54)),
-                          SizedBox(width: 4.0),
-                          Text(location,
-                              style: TextStyle(
-                                  color: Colors.black54,
-                                  fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                      SizedBox(height: 4.0),
-                      Row(
-                        children: [
-                          Text('Quantity: ',
-                              style: TextStyle(color: Colors.black54)),
-                          Text('$quantity Ton',
-                              style: TextStyle(
-                                  color: Colors.black54,
-                                  fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                      SizedBox(height: 8.0),
+                      Text('Location: $location',
+                          style: TextStyle(color: Colors.black54)),
+                      Text('Quantity: $quantity',
+                          style: TextStyle(color: Colors.black54)),
                     ],
                   ),
                 ),
@@ -158,64 +187,42 @@ class AuctionCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildDetailColumn('Start:', DateFormat.yMMMd().format(start)),
-                _buildDetailColumn('End:', DateFormat.yMMMd().format(end)),
-                _buildDetailColumn('Remaining:', remaining),
+                _buildDetailColumn('Start', DateFormat.MMMd().format(start)),
+                _buildDetailColumn('End', DateFormat.MMMd().format(end)),
+                _buildDetailColumn('Remaining', remaining),
               ],
             ),
             Divider(height: 24.0, thickness: 1.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildDetailColumn('Your Bid:',
+                _buildDetailColumn('Your Bid',
                     'Rs. ${NumberFormat.compact().format(yourBid)}'),
-                _buildDetailColumn('Bid Increment:',
+                _buildDetailColumn('Bid Increment',
                     'Rs. ${NumberFormat.compact().format(bidIncrement)}'),
-                _buildDetailColumn('Going At:',
+                _buildDetailColumn('Going At',
                     'Rs. ${NumberFormat.compact().format(goingAt)}'),
               ],
             ),
-            SizedBox(height: 8.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Text('Status: ',
-                        style: TextStyle(
-                            color: Colors.black54,
-                            fontWeight: FontWeight.bold)),
-                    SizedBox(width: 4.0),
-                    Text('Available',
-                        style: TextStyle(
-                            color: Colors.green, fontWeight: FontWeight.bold)),
-                  ],
-                ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: IconButton(
-                    icon: Icon(Icons.launch, color: Colors.grey),
-                    onPressed: () {},
+            SizedBox(height: 16.0),
+            RichText(
+              text: TextSpan(
+                text: 'Status: ',
+                style: TextStyle(color: Colors.black),
+                children: [
+                  TextSpan(
+                    text: status,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: status == 'Available' ? Colors.green : Colors.red,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             )
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildDetailColumn(String label, String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: TextStyle(color: Colors.black54)),
-        SizedBox(height: 4.0),
-        Text(value,
-            style:
-                TextStyle(color: Colors.black54, fontWeight: FontWeight.bold)),
-      ],
     );
   }
 }
