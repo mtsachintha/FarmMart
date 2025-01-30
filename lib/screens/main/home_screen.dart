@@ -387,7 +387,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-}
 
 AppBar buildHomeAppBar() {
   const double searchBarHeight = 36.0;
