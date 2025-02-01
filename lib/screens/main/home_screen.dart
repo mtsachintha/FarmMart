@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:farm_application/screens/main/detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:farm_application/colors.dart';
 import 'package:farm_application/models/product.dart';
 import 'dart:math';
+import 'package:google_generative_ai/google_generative_ai.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -71,6 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     try {
       print("Before searchWithMultipleKeywords");
+      fetchAndGenerateKeywords();
       results = await searchWithMultipleKeywords(keywords);
       print("After searchWithMultipleKeywords: $results");
 
@@ -88,8 +92,86 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onItemTapped(int index) {
     setState(() {});
-    // Handle navigation logic here based on the selected index
   }
+
+  //Start of Gemini Intergration
+
+  Future<List<String>> getKeywordsFromGemini(List<String> titles) async {
+    const apiKey = "AIzaSyChjB12t8w5bO8IyULrya5FduzCQtKywKQ";
+
+    final model = GenerativeModel(
+      model: 'gemini-pro',
+      apiKey: apiKey,
+    );
+
+    // Prepare the prompt to generate keywords
+    final prompt = """
+    Please give me a list of 10 keywords using this list of titles in a JSON format.
+    Example response:
+    json
+    ["keyword1", "keyword2", "keyword3", ..., "keyword10"]
+    
+    Titles: ${titles.join(', ')}
+  """;
+
+    try {
+      final content = [Content.text(prompt)];
+      final response = await model.generateContent(content);
+
+      if (response.text != null) {
+        String rawResponse = response.text!;
+
+        // Extract the JSON part if wrapped in json ... 
+        RegExp jsonRegex =
+            RegExp(r'json\s*([\s\S]*?)\s*', multiLine: true);
+        Match? match = jsonRegex.firstMatch(rawResponse);
+
+        String jsonResponse;
+        if (match != null) {
+          jsonResponse = match.group(1)!; // Extract JSON part
+        } else {
+          jsonResponse =
+              rawResponse; // Assume whole response is JSON if no formatting
+        }
+
+        // Decode JSON string into a list
+        List<dynamic> parsedJson = jsonDecode(jsonResponse);
+        return parsedJson.map((e) => e.toString()).toList();
+      } else {
+        throw 'No response from Gemini';
+      }
+    } catch (e) {
+      throw 'Error generating keywords: $e';
+    }
+  }
+
+  void fetchAndGenerateKeywords() async {
+    try {
+      List<String> titles = await getUserFypTitles();
+      print('Fetched Titles: $titles');
+
+      keywords = await getKeywordsFromGemini(titles);
+      print('Generated Keywords: $keywords');
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  Future<List<String>> getUserFypTitles() async {
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    final DocumentSnapshot userDoc =
+        await firestore.collection('users').doc('@evogreenhouse').get();
+
+    if (userDoc.exists) {
+      // Extract fyp titles
+      List<dynamic> fypTitles = userDoc['fyp'] ?? [];
+      return fypTitles.map((title) => title.toString()).toList();
+    } else {
+      throw 'User not found';
+    }
+  }
+
+  //End of Gemini Intergration
 
   @override
   Widget build(BuildContext context) {
