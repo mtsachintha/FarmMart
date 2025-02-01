@@ -48,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
         QuerySnapshot querySnapshot = await firestore
             .collection('listings')
             .where('name', isGreaterThanOrEqualTo: keyword)
-            .where('name', isLessThanOrEqualTo: keyword + '\uf8ff')
+            .where('name', isLessThanOrEqualTo: '$keyword\uf8ff')
             .get();
 
         // Add each result to the results list
