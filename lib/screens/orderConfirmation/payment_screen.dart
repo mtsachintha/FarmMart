@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:farm_application/colors.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class PaymentScreen extends StatefulWidget {
   @override
@@ -97,7 +99,43 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 foregroundColor: Colors.white,
                 minimumSize: const Size(double.infinity, 50),
               ),
-              onPressed: () {},
+              onPressed: () async {
+                final firestore = FirebaseFirestore.instance;
+                final docRef = firestore.collection('price-data').doc('carrot');
+
+                final today = DateTime.now();
+                final formattedDate = DateFormat('yyyy-MM-dd')
+                    .format(today); // Example: 2025-01-23
+                const newPrice =
+                    510; // Set the price dynamically based on input
+
+                await firestore.runTransaction((transaction) async {
+                  final snapshot = await transaction.get(docRef);
+
+                  if (snapshot.exists) {
+                    final data = snapshot.data() as Map<String, dynamic>;
+
+                    if (data.containsKey(formattedDate)) {
+                      // Date exists, append new price
+                      List<dynamic> prices = List.from(data[formattedDate]);
+                      prices.add(newPrice);
+                      transaction.update(docRef, {formattedDate: prices});
+                    } else {
+                      // Date does not exist, create new entry
+                      transaction.update(docRef, {
+                        formattedDate: [newPrice]
+                      });
+                    }
+                  } else {
+                    // If the document itself does not exist, create it
+                    transaction.set(docRef, {
+                      formattedDate: [newPrice]
+                    });
+                  }
+                });
+
+                print('Price updated successfully.');
+              },
               child: const Text(
                 'Continue',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),

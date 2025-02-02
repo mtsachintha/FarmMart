@@ -9,6 +9,15 @@ class ProductDetailScreen extends StatelessWidget {
   // Constructor accepting Product object
   const ProductDetailScreen({super.key, required this.product});
 
+  String formatPrice(int price) {
+    if (price >= 1000000) {
+      return 'Rs ${(price / 1000000)}M'; // 2.0M
+    } else if (price >= 1000) {
+      return 'Rs ${(price / 1000)}K'; // 20K
+    }
+    return 'Rs $price';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -119,7 +128,7 @@ class ProductDetailScreen extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        '\$${product.buyNow.toStringAsFixed(2)}',
+                        formatPrice(2580000), // Change the value dynamically
                         style: TextStyle(
                           color: AppColors.foreOrange,
                           fontSize: 20,
@@ -129,7 +138,7 @@ class ProductDetailScreen extends StatelessWidget {
                       SizedBox(width: 4),
                       if (product.bidNow < product.buyNow) // If discounted
                         Text(
-                          '\$${product.bidNow.toStringAsFixed(2)}',
+                          '\$${product.buyNow.toStringAsFixed(2)}',
                           style: TextStyle(
                             decoration: TextDecoration.lineThrough,
                             color: Colors.grey,
