@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:farm_application/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:farm_application/screens/main/home_screen.dart';
 
 class PaymentScreen extends StatefulWidget {
   @override
@@ -133,6 +134,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     });
                   }
                 });
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                );
 
                 print('Price updated successfully.');
               },

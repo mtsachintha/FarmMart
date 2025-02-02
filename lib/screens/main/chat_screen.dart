@@ -81,7 +81,7 @@ AppBar buildSecondAppBar() {
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.w500,
-              fontSize: 20.0, // Adjust the font size as needed
+              fontSize: 18.0, // Adjust the font size as needed
             ),
           ),
         ),

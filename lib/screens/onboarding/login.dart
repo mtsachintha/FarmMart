@@ -83,7 +83,7 @@ class LoginPage extends StatelessWidget {
               SizedBox(height: 20),
               OutlinedButton(
                 onPressed: () {
-                  // Handle sign up
+                  Navigator.pushReplacementNamed(context, '/bisType');
                 },
                 style: OutlinedButton.styleFrom(
                     padding:

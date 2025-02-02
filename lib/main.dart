@@ -2,9 +2,14 @@ import 'package:farm_application/screens/main/settings_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'screens/main/home_screen.dart';
-import 'screens/orderConfirmation/payment_screen.dart';
+import 'screens/onboarding/intro_page.dart';
+import 'screens/onboarding/login.dart';
 import 'screens/main/auction_screen.dart';
 import 'screens/main/chat_screen.dart';
+import 'screens/onboarding/business_contact.dart';
+import 'screens/onboarding/business_name.dart';
+import 'screens/onboarding/business_type.dart';
+
 import 'colors.dart';
 
 Future main() async {
@@ -24,11 +29,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: '/', // Starting route
+      initialRoute: '/intro', // Starting route
       routes: {
         '/': (context) => BuildHomeScreen(),
         '/main': (context) => BuildHomeScreen(),
-        '/login': (context) => PaymentScreen(),
+        '/intro': (context) => IntroPage(),
+        '/login': (context) => LoginPage(),
+        '/bisName': (context) => BusinessNameScreen(),
+        '/bisType': (context) => BisTypeSelectionScreen(),
+        '/bisContact': (context) => BusinessContactScreen(),
       },
     );
   }
@@ -57,7 +66,7 @@ class _BuildHomeScreenState extends State<BuildHomeScreen> {
   ];
 
   void _onItemTapped(int index) {
-    if (!mounted) return; // Prevent calling setState on an unmounted widget
+    if (!mounted) return;
     setState(() {
       _selectedIndex = index;
     });

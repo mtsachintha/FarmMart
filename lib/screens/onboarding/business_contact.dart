@@ -6,18 +6,25 @@ class BusinessContactScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Sign In',
-          style: TextStyle(
-            fontSize: 18.0, // Change this value to adjust the text size
-          ),
+        titleSpacing: 0.0,
+        iconTheme: IconThemeData(
+          color: Colors.white, // Change this to any color you want
         ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            // Handle back action
-            Navigator.pop(context);
-          },
+        backgroundColor: AppColors.darkGreen,
+        title: Row(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: Text(
+                "Sign Up",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 18.0, // Adjust the font size as needed
+                ),
+              ),
+            ),
+          ],
         ),
       ),
       body: Padding(
