@@ -46,6 +46,15 @@ class SettingsScreen extends StatelessWidget {
                 Icons.arrow_forward_ios,
                 size: 16.0, // Smaller icon size
               ),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(Icons.add_shopping_cart),
+              title: Text('Add a Product'),
+              trailing: Icon(
+                Icons.arrow_forward_ios,
+                size: 16.0, // Smaller icon size
+              ),
               onTap: () {
                 Navigator.push(
                   context,

@@ -475,6 +475,7 @@ AppBar buildHomeAppBar() {
   const double searchBarHeight = 36.0;
 
   return AppBar(
+    automaticallyImplyLeading: false,
     titleSpacing: 0.0,
     backgroundColor: AppColors.darkGreen,
     title: Row(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:farm_application/colors.dart';
 
 class AddProductPage extends StatefulWidget {
   @override
@@ -35,16 +36,9 @@ class _AddProductPageState extends State<AddProductPage> {
 
   // Submit the product data to Firestore
   void submitProduct() async {
-    if (bidStartController.text.isEmpty ||
-        buyNowController.text.isEmpty ||
-        selectedCategory == null ||
-        createdDate == null ||
-        endDate == null ||
-        descriptionController.text.isEmpty ||
+    if (descriptionController.text.isEmpty ||
         nameController.text.isEmpty ||
-        quantityController.text.isEmpty ||
-        sellerController.text.isEmpty ||
-        thumbnailController.text.isEmpty) {
+        quantityController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please fill in all fields")),
       );
@@ -58,7 +52,7 @@ class _AddProductPageState extends State<AddProductPage> {
         'bid_start': int.parse(bidStartController.text),
         'buy_now': int.parse(buyNowController.text),
         'category': selectedCategory,
-        'created': createdDate!.toIso8601String(),
+        'created': "",
         'description': descriptionController.text,
         'end': endDate!.toIso8601String(),
         'images': [
@@ -74,11 +68,45 @@ class _AddProductPageState extends State<AddProductPage> {
         'type': selectedType,
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Product added successfully")),
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.check_circle, color: Colors.green, size: 60),
+                const SizedBox(height: 16),
+                const Text(
+                  "Item Successfully Sent for Review!",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context); // Close dialog
+                    Navigator.pop(context); // Navigate back to home
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.darkGreen,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10.0, horizontal: 20.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text("Go Back"),
+                ),
+              ],
+            ),
+          );
+        },
       );
-
-      Navigator.pop(context); // Go back after submission
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Error: $e")),
@@ -109,70 +137,39 @@ class _AddProductPageState extends State<AddProductPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Add Product"),
+        titleSpacing: 0.0,
+        backgroundColor: AppColors.darkGreen,
+        title: Row(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: Text(
+                "Auction",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 18.0, // Adjust the font size as needed
+                ),
+              ),
+            ),
+            Spacer(), // Pushes the icon to the right
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: IconButton(
+                icon: Icon(Icons.bookmarks_outlined, color: Colors.white),
+                onPressed: () {
+                  // Action for bookmark icon tap
+                },
+              ),
+            ),
+          ],
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Column(
             children: [
-              TextField(
-                controller: bidStartController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: "Bid Start"),
-              ),
-              TextField(
-                controller: buyNowController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: "Buy Now"),
-              ),
-              DropdownButtonFormField<String>(
-                value: selectedCategory,
-                items: categories
-                    .map((category) => DropdownMenuItem(
-                          value: category,
-                          child: Text(category),
-                        ))
-                    .toList(),
-                onChanged: (value) {
-                  setState(() {
-                    selectedCategory = value;
-                  });
-                },
-                decoration: const InputDecoration(labelText: "Category"),
-              ),
-              TextField(
-                controller: descriptionController,
-                maxLines: 5,
-                minLines: 1,
-                decoration: const InputDecoration(labelText: "Description"),
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(createdDate == null
-                        ? "Created Date: Not Selected"
-                        : "Created Date: ${DateFormat.yMMMd().format(createdDate!)}"),
-                  ),
-                  ElevatedButton(
-                    onPressed: () => pickDate(isCreatedDate: true),
-                    child: const Text("Pick Date"),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(endDate == null
-                        ? "End Date: Not Selected"
-                        : "End Date: ${DateFormat.yMMMd().format(endDate!)}"),
-                  ),
-                  ElevatedButton(
-                    onPressed: () => pickDate(isCreatedDate: false),
-                    child: const Text("Pick Date"),
-                  ),
-                ],
-              ),
               TextField(
                 controller: nameController,
                 decoration: const InputDecoration(labelText: "Name"),
@@ -215,12 +212,29 @@ class _AddProductPageState extends State<AddProductPage> {
                 ],
               ),
               TextField(
-                controller: sellerController,
-                decoration: const InputDecoration(labelText: "Seller"),
+                controller: bidStartController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(labelText: "Bid Start"),
               ),
               TextField(
-                controller: thumbnailController,
-                decoration: const InputDecoration(labelText: "Thumbnail URL"),
+                controller: buyNowController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(labelText: "Buy Now"),
+              ),
+              DropdownButtonFormField<String>(
+                value: selectedCategory,
+                items: categories
+                    .map((category) => DropdownMenuItem(
+                          value: category,
+                          child: Text(category),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedCategory = value;
+                  });
+                },
+                decoration: const InputDecoration(labelText: "Category"),
               ),
               DropdownButtonFormField<String>(
                 value: selectedType,
@@ -237,10 +251,103 @@ class _AddProductPageState extends State<AddProductPage> {
                 },
                 decoration: const InputDecoration(labelText: "Type"),
               ),
+              TextField(
+                controller: descriptionController,
+                maxLines: 5,
+                minLines: 1,
+                decoration: const InputDecoration(labelText: "Description"),
+              ),
               const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: submitProduct,
-                child: const Text("Submit Product"),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Image.asset(
+                    "assets/placeholder_veg.png",
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.cover,
+                  ),
+                  Image.asset(
+                    "assets/placeholder_veg.png",
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.cover,
+                  ),
+                  Image.asset(
+                    "assets/placeholder_veg.png",
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.cover,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      "Created Date: ${DateFormat.yMMMd().add_jm().format(DateTime.now())}",
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(endDate == null
+                        ? "End Date: Not Selected"
+                        : "End Date: ${DateFormat.yMMMd().format(endDate!)}"),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => pickDate(isCreatedDate: false),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          AppColors.darkGreen, // Updated background color
+                      foregroundColor: Colors.white, // Text color set to white
+                    ),
+                    child: const Text("Pick Date"),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: submitProduct,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.darkGreen,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8.0, horizontal: 16.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text(
+                      "Send for Review",
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.midGray,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8.0, horizontal: 16.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text(
+                      "Draft",
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
