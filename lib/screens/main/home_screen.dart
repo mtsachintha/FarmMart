@@ -9,6 +9,9 @@ import 'dart:math';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key? key})
+      : super(key: key); // Just pass the key to the super constructor
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }

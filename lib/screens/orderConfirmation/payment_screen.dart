@@ -82,7 +82,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "₹2560.00",
+                      "RS 12.25M",
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),

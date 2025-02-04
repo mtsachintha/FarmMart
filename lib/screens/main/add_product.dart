@@ -144,7 +144,7 @@ class _AddProductPageState extends State<AddProductPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
               child: Text(
-                "Auction",
+                "Add a Product",
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w500,
