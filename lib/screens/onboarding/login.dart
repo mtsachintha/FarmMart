@@ -1,7 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import '../../colors.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<void> _loginWithEmail() async {
+    try {
+      await _auth.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+      Navigator.pushReplacementNamed(context, '/main');
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Login failed: $e'),
+      ));
+    }
+  }
+
+  Future<void> _signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser?.authentication;
+
+      if (googleAuth == null) return;
+
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      await _auth.signInWithCredential(credential);
+      Navigator.pushReplacementNamed(context, '/main');
+    } catch (e) {
+      print("Google Sign-In Error: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,19 +60,13 @@ class LoginPage extends StatelessWidget {
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-                child: Align(
-                  alignment: Alignment.center, // Aligns the logo to the left
-                  child: Image.asset(
-                    'assets/logo_banner_black.png', // Replace with your logo asset path
-                    height: 90,
-                  ),
-                ),
+                child: Image.asset('assets/logo_banner_black.png', height: 90),
               ),
               SizedBox(height: 60),
               ConstrainedBox(
-                constraints:
-                    BoxConstraints(maxWidth: 400), // Adjust max width as needed
+                constraints: BoxConstraints(maxWidth: 400),
                 child: TextField(
+                  controller: emailController,
                   decoration: InputDecoration(
                     labelText: 'Email',
                     border: OutlineInputBorder(
@@ -38,16 +77,16 @@ class LoginPage extends StatelessWidget {
               ),
               SizedBox(height: 20),
               ConstrainedBox(
-                constraints:
-                    BoxConstraints(maxWidth: 400), // Adjust max width as needed
+                constraints: BoxConstraints(maxWidth: 400),
                 child: TextField(
+                  controller: passwordController,
+                  obscureText: true,
                   decoration: InputDecoration(
                     labelText: 'Password',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                   ),
-                  obscureText: true,
                 ),
               ),
               SizedBox(height: 10),
@@ -55,7 +94,7 @@ class LoginPage extends StatelessWidget {
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () {
-                    // Handle forgot password
+                    // Implement Forgot Password
                   },
                   child: Text('Forgot Password?',
                       style: TextStyle(
@@ -65,18 +104,13 @@ class LoginPage extends StatelessWidget {
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/main');
-                },
+                onPressed: _loginWithEmail,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.darkGreen,
                   padding: EdgeInsets.symmetric(horizontal: 120, vertical: 16),
-                  textStyle: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  foregroundColor:
-                      Colors.white, // This sets the text color to white
+                  textStyle:
+                      TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  foregroundColor: Colors.white,
                 ),
                 child: Text('Log In'),
               ),
@@ -86,22 +120,18 @@ class LoginPage extends StatelessWidget {
                   Navigator.pushReplacementNamed(context, '/bisType');
                 },
                 style: OutlinedButton.styleFrom(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 115, vertical: 16),
-                    textStyle: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    foregroundColor: AppColors.darkGreen),
+                  padding: EdgeInsets.symmetric(horizontal: 115, vertical: 16),
+                  textStyle:
+                      TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  foregroundColor: AppColors.darkGreen,
+                ),
                 child: Text('Sign Up'),
               ),
               SizedBox(height: 20),
               Text(
                 'Or Log In with',
                 style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.darkGreen,
-                ),
+                    fontWeight: FontWeight.bold, color: AppColors.darkGreen),
               ),
               SizedBox(height: 16),
               Row(
@@ -111,38 +141,8 @@ class LoginPage extends StatelessWidget {
                     width: 48.0,
                     height: 48.0,
                     child: IconButton(
-                      icon:
-                          Image.asset('assets/google_icon.png'), // Google icon
-                      onPressed: () {
-                        // Handle Google login
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    width: 16,
-                  ),
-                  SizedBox(
-                    width: 48.0,
-                    height: 48.0,
-                    child: IconButton(
-                      icon: Image.asset('assets/fb_icon.png'), // Facebook icon
-                      onPressed: () {
-                        // Handle Facebook login
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    width: 16,
-                  ),
-                  SizedBox(
-                    width: 48.0,
-                    height: 48.0,
-                    child: IconButton(
-                      icon: Image.asset(
-                          'assets/linked_icon.png'), // LinkedIn icon
-                      onPressed: () {
-                        // Handle LinkedIn login
-                      },
+                      icon: Image.asset('assets/google_icon.png'),
+                      onPressed: _signInWithGoogle,
                     ),
                   ),
                 ],
